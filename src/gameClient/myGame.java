@@ -1,5 +1,6 @@
 package gameClient;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,21 +15,36 @@ import gameClient.util.Point3D;
 
 public class myGame {
 	private directed_weighted_graph grp;
-	private List<CL_Agent> ash;
-	private List<CL_Pokemon> poke;
-	private List<String> _info;  //maybe to do
+	private LinkedList<CL_Agent> ash;
+	private LinkedList<CL_Pokemon> poke;
+	private LinkedList<String> _info;  //maybe to do
 	private int numA;
 	
 	public myGame(game_service game) {
 		stGRP(game);
 		stPOKE(game);
 		numOfAgent(game);
+		Iterator<CL_Pokemon> movep = getPoke().iterator() ;
+
+		//add agent by "numA" - add by find the location for one of the "poke"
+		for(int i = 0 ; i < this.getNumA() ; i++) {
+			if(movep.hasNext()) {
+				int src = movep.next().get_edge().getSrc();
+				game.addAgent(src);
+			}
+			else if(getPoke() != null){
+				int src = getPoke().get(0).get_edge().getSrc();
+				game.addAgent(src);
+			}
+		} 
+		stAGE(game);
 	}
 	
 	public void stGRP(game_service game) {
 		try {
 			Gson gson = new Gson();
-			this.grp = gson.fromJson(game.getGraph(), DWGraph_DS.class);
+			gson.fromJson(game.getGraph(), DWGraph_DS.class);
+			//this.grp = gson.fromJson(game.getGraph(), DWGraph_DS.class);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -40,7 +56,6 @@ public class myGame {
 		try {
 			JSONObject first = new JSONObject(game.getPokemons());
 			JSONArray second = first.getJSONArray("Pokemons");
-			Gson gson = new Gson();
 			for(int i = 0 ; i < second.length() ; i++) {
 			
 				JSONObject third = second.getJSONObject(i);
@@ -102,19 +117,19 @@ public class myGame {
 		this.grp = grp;
 	}
 
-	public List<CL_Agent> getAsh() {
+	public LinkedList<CL_Agent> getAsh() {
 		return ash;
 	}
 
-	public void setAsh(List<CL_Agent> ash) {
+	public void setAsh(LinkedList<CL_Agent> ash) {
 		this.ash = ash;
 	}
 
-	public List<CL_Pokemon> getPoke() {
+	public LinkedList<CL_Pokemon> getPoke() {
 		return poke;
 	}
 
-	public void setPoke(List<CL_Pokemon> poke) {
+	public void setPoke(LinkedList<CL_Pokemon> poke) {
 		this.poke = poke;
 	}
 
