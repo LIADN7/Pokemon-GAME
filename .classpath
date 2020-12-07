@@ -6,8 +6,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/gameClient/gson-2.8.6.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/gameClient/java-json.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/gameClient/Ex2_Server_v0.13.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aviel11/git/Pokemon-GAME/src/gameClient/java-json.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aviel11/git/Pokemon-GAME/src/gameClient/gson-2.8.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aviel11/git/Pokemon-GAME/src/gameClient/Ex2_Server_v0.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
