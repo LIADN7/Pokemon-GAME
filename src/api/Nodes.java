@@ -30,6 +30,21 @@ public class Nodes implements node_data {
 		this.sizeOf = 0;
 	}	
 	
+	
+	
+	public Nodes(int id, geo_location e) {
+		if(id>defualtkey)
+			this.defualtkey = id+1;
+		this.key=id;
+		this.info = null;
+		this.tag = 0;
+		this.NW = 0;
+		this.forward = new HashMap<Integer,Edges>();
+		this.backwards = new HashMap<Integer,String>();
+		this.local = e;
+		this.sizeOf = 0;			
+	}
+	
 	public void addTo(int num , double w) {
 		if(forward.containsKey(num)) {
 			if(forward.get(num).getWeight() != w) {
@@ -89,13 +104,13 @@ public class Nodes implements node_data {
 	@Override
 	public geo_location getLocation() {
 		// TODO Auto-generated method stub
-		return null;
+		return local;
 	}
 
 	@Override
 	public void setLocation(geo_location p) {
 		// TODO Auto-generated method stub
-		
+		this.local = p;
 	}
 
 	@Override

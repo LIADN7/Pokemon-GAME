@@ -13,6 +13,14 @@ public class Edges implements edge_data {
 		this.info = "";
 		this.tag = 0;
 	}
+	
+	public Edges(edge_data e) {
+		this.src = e.getSrc();
+		this.dest = e.getDest();
+		this.weight = e.getWeight();
+		this.info = e.getInfo();
+		this.tag = e.getTag();
+	}
 
 	@Override
 	public int getSrc() {
