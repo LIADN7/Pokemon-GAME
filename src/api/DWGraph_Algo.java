@@ -4,26 +4,28 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+
 public class DWGraph_Algo implements dw_graph_algorithms{
 	private directed_weighted_graph myGraph;
-	
+
 	public DWGraph_Algo() {
 		this.myGraph = new DWGraph_DS();
 	}
-	
-	
+
 	@Override
 	public void init(directed_weighted_graph g) {
 		// TODO Auto-generated method stub
 		myGraph = g;
-		
+
 	}
 
 	@Override
@@ -34,11 +36,17 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
 	@Override
 	public directed_weighted_graph copy() {
-
-			Gson gsonF = new GsonBuilder().create();
-			Gson gsonW = new Gson();
-			DWGraph_DS a=gsonW.fromJson(gsonF.toJson(this.myGraph), DWGraph_DS.class);
-			return a;
+		directed_weighted_graph w1 = new DWGraph_DS();
+		for(node_data node : myGraph.getV()) {
+			node_data temp = new Nodes(node);
+			w1.addNode(temp);
+		}
+		for(node_data node : myGraph.getV()) {
+			for(edge_data edge : myGraph.getE(node.getKey())) {
+				w1.connect(node.getKey(), edge.getDest(), edge.getWeight());
+			}
+		}
+		return w1;
 	}
 
 	@Override
@@ -47,23 +55,21 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		if(myGraph.nodeSize() <= 1) {
 			return true;
 		}
-
-		LinkedList<Nodes> moves = new LinkedList<Nodes>();
+		LinkedList<Integer> moves = new LinkedList<Integer>();
 		HashMap<Integer,String> in = new HashMap<Integer,String>();
 		int num = myGraph.getV().iterator().next().getKey();
 
-		moves.add((Nodes) myGraph.getNode(num));
-		in.put(num, "v");
-		
+		moves.add(num);
+
 		while(!moves.isEmpty()) {
-			Nodes temp = moves.poll();
-			if(temp.getSizeOf() == 0) {
+			int tempNum = moves.poll();
+			if(myGraph.getE(tempNum).size() == 0) {
 				return false;
 			}
-			for(edge_data n : temp.getF()) {
+			for(edge_data n : myGraph.getE(tempNum)) {
 				num = n.getDest();
 				if(!in.containsKey(num)) {
-					moves.add((Nodes) myGraph.getNode(num));
+					moves.add(num);
 					in.put(num, "v");
 				} 
 			}
@@ -72,8 +78,9 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 			return true;
 		}
 		return false;
+
 	}
-	
+
 	@Override
 	public double shortestPathDist(int src, int dest) {
 		// TODO Auto-generated method stub
@@ -81,17 +88,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 			return -1;
 		}
 		if(src == dest) return 0;
-		LinkedList<Nodes> q = bfs(src,dest);
-		if(q.isEmpty()) {
-			return -1;
-		}
-		double count = myGraph.getNode(dest).getWeight();
-		while(!q.isEmpty()) {
-			Nodes n = q.poll();
-			n.setWeight(0);;
-			n.setPrev(0);
-		}
-		return count-1;
+		return bfs(src,dest);
 	}
 
 	@Override
@@ -100,29 +97,25 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		node_data t1 = myGraph.getNode(src);
 		LinkedList<node_data> list = new LinkedList<node_data>();
 		if(t1 == null || myGraph.getNode(dest) == null) {
-			return list;
+			return null;
 		}
 		if(src == dest) {
 			list.add(t1);
 			return list;
 		}
-		LinkedList<Nodes> q = bfs(src,dest);
-		if(q.isEmpty()) {
-			return list;
+		HashMap<Integer,Point> map = bfs1(src,dest);
+		if(map == null) {
+			return null;
 		}
-		Nodes t2 = (Nodes) myGraph.getNode(dest);
-		node_data t3 = t2;
+		Point point = map.get(dest);
+		node_data t3 = myGraph.getNode(dest);
 		list.add(t3);
-		while(t2.getKey() != src) {
-			t3 = myGraph.getNode(t2.getPrev());
+		while(point.getPrev() != src) {
+			t3 = myGraph.getNode(point.getPrev());
 			list.addFirst(t3);
-			t2.setPrev(0);
-			t2.setWeight(0);
-			t2 = (Nodes) myGraph.getNode(t3.getKey());;
+			point = map.get(point.getPrev());
 
 		}
-		t2.setPrev(0);
-		t2.setWeight(0);;
 		return list;
 	}
 
@@ -131,7 +124,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		try {
 			StringBuilder sb = new StringBuilder();
 			PrintWriter pw=new PrintWriter(new File(file));
-			Gson gson=new GsonBuilder().create();
+			Gson gson=new GsonBuilder().setPrettyPrinting().create();
 			sb.append(gson.toJson(this.myGraph));
 			pw.write(sb.toString());
 			pw.close();
@@ -145,12 +138,28 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
 	@Override
 	public boolean load(String file) {
-
+		//DWGraph_DS a = new DWGraph_DS();
+//		try 
+//		{
+//			GsonBuilder builder = new GsonBuilder();
+//			builder.registerTypeAdapter(DWGraph_DS.class, new GraphJsonDeserializer());
+//			Gson gson = builder.create();			
+//			//continue as usual.. 
+//
+//			FileReader reader = new FileReader(file);
+//			DWGraph_DS a = gson.fromJson(reader, DWGraph_DS.class);	
+//			System.out.println(a);
+//			return true;
+//		} 
+//		catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//			return false;
+//		}
 		try {
 			FileReader read = new FileReader(file);	
 			Gson gson=new Gson();
 			DWGraph_DS a=gson.fromJson(read, DWGraph_DS.class);
-			this.myGraph=a;
+			this.myGraph = a;
 			return true;
 		}
 		catch(FileNotFoundException e){
@@ -162,49 +171,93 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
 	/**
 	 * @param start node.
-     * @param dest - end (target) node.
+	 * @param dest - end (target) node.
 	 * @returns the weight of the shortest path between src to dest.
 	 * if no such path --> returns -1
 	 */
-	private LinkedList<Nodes> bfs(int src , int dest){
-		LinkedList<Nodes> q = new LinkedList<Nodes>();
-		LinkedList<Nodes> qtemp = new LinkedList<Nodes>();
-		Nodes curr = (Nodes) myGraph.getNode(src);
-		q.add(curr);
-		curr.setWeight(1);;
-		qtemp.add(curr);
+	private double bfs(int src , int dest){
+		LinkedList<Point> qni = new LinkedList<Point>();
+		Point curr = new Point(src);
+		double way = -1;
+		curr.setWeight(1);
+		qni.add(curr);
 		double count = 0;
-		while(!qtemp.isEmpty()) {
+		while(!qni.isEmpty()) {
 			boolean bool = false;
-			curr = qtemp.poll();
+			curr = qni.poll();
 			double weight = curr.getWeight();
-			for(edge_data temp :curr.getF()) {
+			for(edge_data temp : myGraph.getE(curr.getKey())){
 				int TempN = temp.getDest();
-				Nodes n = (Nodes) myGraph.getNode(TempN);
+				Point n = new Point(TempN);
 				count = temp.getWeight() + weight;
-				if(TempN == dest && n.getWeight() > count) {
+				if(TempN == dest && (way > count || way == -1)) {
 					n.setWeight(count);
-					n.setPrev(curr.getKey());
-					q.add(n);
+					way = count;
 					bool = true;
 				}
-				else if((n.getWeight() > count  || n.getWeight() == 0) && !bool) {
+				else if(n.getWeight() == -1 && !bool) {
 					n.setWeight(count);
-					n.setPrev(curr.getKey());
-					qtemp.add(n);
-					q.add(n);
+					qni.add(n);
 				}
 			}
 		}
-		if(myGraph.getNode(dest).getWeight() != 0) {
-			return q;
+		if(way >= 0) {
+			return (way-1);
 		}
-		while(!(q.isEmpty())) {
-			curr = q.poll();
-			curr.setWeight(0);;
-			curr.setPrev(0);
-		}
-		return q;
+		return -1;
 	}
 
+	private HashMap<Integer,Point> bfs1(int src , int dest){
+		HashMap<Integer,Point> map = new HashMap<Integer,Point>();
+		LinkedList<Integer> qtemp = new LinkedList<Integer>();
+		Point curr = new Point(src,0,-1);
+		map.put(src, curr);
+		qtemp.add(src);
+		double count = 0;
+		double way = -1;
+		while(!qtemp.isEmpty()) {
+			boolean bool = false;
+			int poll = qtemp.poll();
+			double weight = map.get(poll).getWeight();
+			for(edge_data temp : myGraph.getE(poll)) {
+				int TempN = temp.getDest();
+				count = temp.getWeight() + weight;
+				if(TempN == dest && (way > count || way == -1)) {
+					Point end = new Point(dest);
+					if(!map.containsKey(dest)) {
+						map.put(dest, end);
+					}
+					map.get(dest).setWeight(count);
+					map.get(dest).setPrev(poll);
+					way = count;
+					bool = true;
+				}
+				else if(update(TempN,count,poll,map) && !bool) {
+					qtemp.add(TempN);
+				}
+			}
+		}
+		if(map.containsKey(dest)) {
+			return map;
+		}
+		return null;
+	}
+
+	private boolean update(int node, double weight, int prev, HashMap<Integer,Point> map) {
+		if(!map.containsKey(node)) {
+			Point temp = new Point(node,weight,prev);
+			map.put(node, temp);
+			return true;
+		}
+		else {
+			Point temp = map.get(node);
+			if(temp.getWeight() > weight){
+				temp.setWeight(weight);
+				temp.setPrev(prev);
+			}
+		}
+		return true;
+	}
+	
+	
 }

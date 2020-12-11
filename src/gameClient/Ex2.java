@@ -24,35 +24,33 @@ public class Ex2 {
 
 		//build myGame
 		myGame game = new myGame(g);
-		System.out.println("start is good");
-		HashMap<Integer, LinkedList<node_data>> list = new HashMap<Integer, LinkedList<node_data>>();
+		System.out.println("start is good - dont touch");
 
-		
-//		build array of list before the game start
-		
+		//build array of list before the game start
+		HashMap<Integer, LinkedList<node_data>> list = new HashMap<Integer, LinkedList<node_data>>();
 		Iterator<CL_Agent> movea = game.getAsh().iterator();
 		while(movea.hasNext()) {
-			CL_Agent tempA = movea.next();
-			LinkedList<node_data> q = game.NearestPoke(tempA);
-			list.put(tempA.getID(), q);
+			
+			CL_Agent coach = movea.next();
+			LinkedList<node_data> q = game.NearestPoke(coach);
+			list.put(coach.getID(), q);
 		}
-		System.out.println("start 1 is good");
+		System.out.println("find the next poemon to go to is good - can start create the GUI");
+		
 		//start the game
 		g.startGame();
-		int i= 0;
 		while(g.isRunning()) {
 			game.stPOKE(g);
-
 			movea =game.getAsh().iterator();
 			while(movea.hasNext()) {
-				CL_Agent t = movea.next();
-				if(list.get(t.getID())==null) {
-					LinkedList<node_data> l = game.NearestPoke(t);
-					list.get(t.getID()).addAll(l);
+				CL_Agent coach = movea.next();
+				if(list.get(coach.getID())==null) {
+					LinkedList<node_data> l = game.NearestPoke(coach);
+					list.get(coach.getID()).addAll(l);
 				}				
-				if(list.get(t.getID())!=null && t.get_curr_edge()==null) {
-					node_data node = list.get(t.getID()).poll();
-					g.chooseNextEdge(t.getID(), node.getKey());
+				if(list.get(coach.getID())!=null && coach.get_curr_edge()==null) {
+					node_data node = list.get(coach.getID()).poll();
+					g.chooseNextEdge(coach.getID(), node.getKey());
 				}
 			}
 

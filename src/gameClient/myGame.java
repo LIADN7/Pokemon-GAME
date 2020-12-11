@@ -24,16 +24,13 @@ public class myGame {
 	public myGame(game_service game) {
 		stGRP(game);
 		stPOKE(game);
-
 		numOfAgent(game);
-		
-		
+		System.out.println(numA);
 		Iterator<node_data> moveNode = null;
 		Iterator<CL_Pokemon> movep = poke.iterator() ;
 		//add agent by "numA" - add by find the location for one of the "poke"
 		for(int i = 0 ; i < this.numA ; i++) {
 			if(movep.hasNext()) {
-				
 				int src = movep.next().get_edge().getSrc();
 				game.addAgent(src);
 			}
@@ -44,15 +41,13 @@ public class myGame {
 			else {
 				game.addAgent(moveNode.next().getKey());
 			}
+			
 		} 
 		stAGE(game);
 	}
 	
 	public void stGRP(game_service game) {
-		
 		DWGraph_DS grp =new DWGraph_DS();
-		
-
 		try {
 			JSONObject first = new JSONObject(game.getGraph());
 			JSONArray nodes = first.getJSONArray("Nodes");
@@ -73,7 +68,6 @@ public class myGame {
 			}
 			this.algo = new DWGraph_Algo();
 			this.algo.init(grp);
-
 		}
 		catch (JSONException e) {
 			e.printStackTrace();
@@ -133,29 +127,27 @@ public class myGame {
 	
 	public LinkedList<node_data> NearestPoke(CL_Agent a) {
 		double dist=-1;
-		int shortEnd=-1;
 		int start = a.getSrcNode();
 		Iterator<CL_Pokemon> moves = this.poke.iterator() ;
 
 		while(moves.hasNext()) {
 			CL_Pokemon pok = moves.next();
-			int  p = pok.get_edge().getSrc();
-			double end = this.algo.shortestPathDist(start, p);	
-			if(dist == -1 || (end != -1 && end < dist)){
+			int  srcPoke = pok.get_edge().getSrc();
+			double end = this.algo.shortestPathDist(start, srcPoke);	
+			if(dist == -1 || end < dist){
 				dist = end;
-				shortEnd=p;
 				a.set_curr_fruit(pok);
 			}
 		}
 		int src = a.get_curr_fruit().get_edge().getSrc();
 		int dest = a.get_curr_fruit().get_edge().getDest();
-		LinkedList<node_data> q = (LinkedList<node_data>) algo.shortestPath(a.getID(), src);
+		LinkedList<node_data> q = (LinkedList<node_data>) algo.shortestPath(start, src);
 		q.add(algo.getGraph().getNode(dest));
 		return q;	
 
 	}
 	
-	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
+	public boolean updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
 		while(itr.hasNext()) {
@@ -164,9 +156,13 @@ public class myGame {
 			while(iter.hasNext()) {
 				edge_data e = iter.next();
 				boolean f = isOnEdge(fr.getLocation(), e,fr.getType(), g);
-				if(f) {fr.set_edge(e);}
+				if(f) {
+					fr.set_edge(e);
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 
 	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
