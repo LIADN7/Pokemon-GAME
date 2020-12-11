@@ -99,7 +99,9 @@ public class Ex2_Client implements Runnable{
 	}
 	private void init(game_service game) {
 		String g = game.getGraph();
+		System.out.println(g);
 		String fs = game.getPokemons();
+		System.out.println(fs);
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
 		//gg.init(g);
 		_ar = new Arena();

@@ -13,6 +13,10 @@ public class DWGraph_DS implements directed_weighted_graph {
 		nodes = new HashMap<Integer,Nodes>();
 	}
 	
+	public HashMap<Integer,Nodes> getHash() {return this.nodes;}
+	
+	
+	
 	@Override
 	public node_data getNode(int key) {
 		// TODO Auto-generated method stub
@@ -66,9 +70,10 @@ public class DWGraph_DS implements directed_weighted_graph {
 	public Collection<edge_data> getE(int node_id) {
 		// TODO Auto-generated method stub
 		Nodes temp = (Nodes) getNode(node_id);
+		Iterator<Edges> moves = temp.getF().iterator();
 		Collection<edge_data> t = new LinkedList<edge_data>();
-		while(temp.getF().iterator().hasNext()) {
-			t.add(temp.getF().iterator().next());
+		while(moves.hasNext()) {
+			t.add(moves.next());
 		}
 		return t;
 	}
