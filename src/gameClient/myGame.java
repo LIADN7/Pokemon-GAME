@@ -1,7 +1,6 @@
 package gameClient;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,26 +11,30 @@ import com.google.gson.GsonBuilder;
 
 import api.*;
 import gameClient.util.Point3D;
+import gameClient.util.Range;
+import gameClient.util.Range2D;
+import gameClient.util.Range2Range;
 
 public class myGame {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private DWGraph_Algo algo;
 	private LinkedList<CL_Agent> ash;
 	private LinkedList<CL_Pokemon> poke;
-//	private LinkedList<String> _info;  //maybe to do
+	private List<String> _info;  //maybe to do
 	private int numA;
 	
 	public myGame(game_service game) {
-		stGRP(game);
-		stPOKE(game);
+		_info = new ArrayList<String>();
+		setGraph(game);
+		setPokemons(game);
 		numOfAgent(game);
-		System.out.println(numA);
 		Iterator<node_data> moveNode = null;
 		Iterator<CL_Pokemon> movep = poke.iterator() ;
 		//add agent by "numA" - add by find the location for one of the "poke"
 		for(int i = 0 ; i < this.numA ; i++) {
 			if(movep.hasNext()) {
-				int src = movep.next().get_edge().getSrc();
+				CL_Pokemon startPoke = movep.next();
+				int src = startPoke.get_edge().getSrc();
 				game.addAgent(src);
 			}
 			else if(moveNode == null){
@@ -43,10 +46,18 @@ public class myGame {
 			}
 			
 		} 
-		stAGE(game);
+		setAgent(game);
+		if(numA <= poke.size()) {
+			movep = poke.iterator();
+			for(CL_Agent coach : ash) {
+				CL_Pokemon pok = movep.next();
+				pok.setMin_ro(coach.getID());
+				coach.set_curr_fruit(pok);
+			}
+		}
 	}
 	
-	public void stGRP(game_service game) {
+	public void setGraph(game_service game) {
 		DWGraph_DS grp =new DWGraph_DS();
 		try {
 			JSONObject first = new JSONObject(game.getGraph());
@@ -74,7 +85,7 @@ public class myGame {
 		}
 	}
 	
-	public void stPOKE(game_service game) {
+	public void setPokemons(game_service game) {
 		this.poke = new  LinkedList<CL_Pokemon>();
 		try {
 			JSONObject first = new JSONObject(game.getPokemons());
@@ -95,9 +106,7 @@ public class myGame {
 		}
 	}
 	
-	//check if it work??? 
-	public void stAGE(game_service game) {
-		//check if it work??? 
+	public void setAgent(game_service game) {
 		ash =new LinkedList<CL_Agent>();
 		try {
 			JSONObject ttt = new JSONObject(game.getAgents());
@@ -107,7 +116,6 @@ public class myGame {
 				c.update(ags.get(i).toString());
 				ash.add(c);
 			}
-			//= getJSONArray("Agents");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -125,30 +133,34 @@ public class myGame {
 		}
 	}
 	
-	public LinkedList<node_data> NearestPoke(CL_Agent a) {
-		double dist=-1;
+	public LinkedList<node_data> NearestPoke(CL_Agent a){
 		int start = a.getSrcNode();
-		Iterator<CL_Pokemon> moves = this.poke.iterator() ;
-
-		while(moves.hasNext()) {
-			CL_Pokemon pok = moves.next();
-			int  srcPoke = pok.get_edge().getSrc();
-			double end = this.algo.shortestPathDist(start, srcPoke);	
-			if(dist == -1 || end < dist){
-				dist = end;
-				a.set_curr_fruit(pok);
+		if(a.get_curr_fruit() == null) {
+			double dist = -1;
+			for(CL_Pokemon pok : poke) {
+				if(pok.getMin_ro() == -1) {
+					int  srcPoke = pok.get_edge().getSrc();
+					double end = this.algo.shortestPathDist(start, srcPoke);
+					if(dist == -1 || end < dist){
+						dist = end;
+						a.set_curr_fruit(pok);
+						pok.setMin_ro(a.getID());
+					}
+				}
 			}
 		}
-		int src = a.get_curr_fruit().get_edge().getSrc();
-		int dest = a.get_curr_fruit().get_edge().getDest();
-		LinkedList<node_data> q = (LinkedList<node_data>) algo.shortestPath(start, src);
-		q.add(algo.getGraph().getNode(dest));
-		return q;	
-
+		if(a.get_curr_fruit() != null) {
+			int srcPoke = a.get_curr_fruit().get_edge().getSrc();
+			int destPoke = a.get_curr_fruit().get_edge().getDest();
+			LinkedList<node_data> q = (LinkedList<node_data>) algo.shortestPath(start, srcPoke);
+			q.add(algo.getGraph().getNode(destPoke));
+			return q;
+		}
+		LinkedList<node_data> q = new LinkedList<node_data>();
+		return q;
 	}
 	
 	public boolean updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
-		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
 		while(itr.hasNext()) {
 			node_data v = itr.next();
@@ -166,7 +178,6 @@ public class myGame {
 	}
 
 	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
-
 		boolean ans = false;
 		double dist = src.distance(dest);
 		double d1 = src.distance(p) + p.distance(dest);
@@ -194,40 +205,56 @@ public class myGame {
 	////////////////////////////////////////////////
 	/////////////getters & setters//////////////////
 	////////////////////////////////////////////////
-	public directed_weighted_graph getGrp() {
+	public directed_weighted_graph getGraph() {
 		return algo.getGraph();
-	}
-
-	
-	public DWGraph_Algo getAlgo() {
-		return this.algo;
-	}
-	
-	public void setGrp(directed_weighted_graph grp) {
-		this.algo.init(grp);
 	}
 
 	public LinkedList<CL_Agent> getAsh() {
 		return ash;
 	}
 
-	public void setAsh(LinkedList<CL_Agent> ash) {
-		this.ash = ash;
-	}
-
 	public LinkedList<CL_Pokemon> getPoke() {
 		return poke;
-	}
-
-	public void setPoke(LinkedList<CL_Pokemon> poke) {
-		this.poke = poke;
 	}
 
 	public int getNumA() {
 		return numA;
 	}
-
-	public void setNumA(int numA) {
-		this.numA = numA;
+	
+	public List<String> get_info() {
+		return _info;
 	}
+	
+	////////////////////////////////////////////////
+	//////////////////// RANGE /////////////////////
+	////////////////////////////////////////////////
+	
+	private static Range2D GraphRange(directed_weighted_graph g) {
+		Iterator<node_data> itr = g.getV().iterator();
+		double x0=0,x1=0,y0=0,y1=0;
+		boolean first = true;
+		while(itr.hasNext()) {
+			geo_location p = itr.next().getLocation();
+			if(first) {
+				x0=p.x(); x1=x0;
+				y0=p.y(); y1=y0;
+				first = false;
+			}
+			else {
+				if(p.x()<x0) {x0=p.x();}
+				if(p.x()>x1) {x1=p.x();}
+				if(p.y()<y0) {y0=p.y();}
+				if(p.y()>y1) {y1=p.y();}
+			}
+		}
+		Range xr = new Range(x0,x1);
+		Range yr = new Range(y0,y1);
+		return new Range2D(xr,yr);
+	}
+	public static Range2Range w2f(directed_weighted_graph g, Range2D frame) {
+		Range2D world = GraphRange(g);
+		Range2Range ans = new Range2Range(world, frame);
+		return ans;
+	}
+	
 }

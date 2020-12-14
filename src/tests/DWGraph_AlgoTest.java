@@ -88,21 +88,22 @@ class DWGraph_AlgoTest {
 		dw.addNode(e);
 		dw.addNode(f);
 		dw.addNode(g);
+		node_data h = new Nodes();
+		dw.addNode(h);
 		
 		dw.connect(a.getKey(), b.getKey(), 1);
-		dw.connect(a.getKey(), d.getKey(), 1);
 		dw.connect(b.getKey(), c.getKey(), 1);
 		dw.connect(c.getKey(), d.getKey(), 1);
 		dw.connect(d.getKey(), e.getKey(), 1);
 		dw.connect(e.getKey(), f.getKey(), 1);
 		dw.connect(f.getKey(), g.getKey(), 1);
-		dw.connect(e.getKey(), g.getKey(), 1);
+		dw.connect(g.getKey(), h.getKey(), 1);
 		
 		algo.init(dw);
-		double num = algo.shortestPathDist(a.getKey(), g.getKey());
-		assertEquals(3, num);
-		//need to be (22) -->> 25 -->> 26 -->> 28
-		List<node_data> list = algo.shortestPath(a.getKey(), g.getKey());
+		double num = algo.shortestPathDist(a.getKey(), h.getKey());
+		assertEquals(7, num);
+		//need to be (22) -->> 25 -->> 26 -->> 28 -->> 29
+		List<node_data> list = algo.shortestPath(a.getKey(), h.getKey());
 		if(list != null) {
 			for(int i = 0 ; i < list.size() ; i++)
 				System.out.print(" -->> " + list.get(i).getKey());
@@ -120,7 +121,6 @@ class DWGraph_AlgoTest {
 	void test5() {
 		dw.addNode(e);
 		dw.addNode(f);
-		dw.addNode(g);
 		
 		dw.connect(a.getKey(), b.getKey(), 1);
 		dw.connect(a.getKey(), d.getKey(), 1);
@@ -130,20 +130,21 @@ class DWGraph_AlgoTest {
 		dw.connect(e.getKey(), f.getKey(), 1);
 		dw.connect(f.getKey(), g.getKey(), 1);
 		dw.connect(e.getKey(), g.getKey(), 1);
+
 		
 		algo.init(dw);
 		algo.save("test5.txt");
 		System.out.println("test 5 is completed - good job!");
 	}
 
-	/**
-	 * boolean load(String file)
-	 */
-	@Test
-	void test8() {
-		algo.init(dw);
-		algo.load("read.txt");
-		System.out.println("test 8 is completed - good job!");
-	}
+//	/**
+//	 * boolean load(String file)
+//	 */
+//	@Test
+//	void test8() {
+//		algo.init(dw);
+//		algo.load("read.txt");
+//		System.out.println("test 8 is completed - good job!");
+//	}
 
 }

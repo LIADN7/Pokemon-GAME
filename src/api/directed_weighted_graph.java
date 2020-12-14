@@ -1,4 +1,5 @@
 package api;
+
 import java.util.Collection;
 /**
  * This interface represents a directional weighted graph.
@@ -46,7 +47,7 @@ public interface directed_weighted_graph {
 	 */
 	public Collection<node_data> getV();
 	/**
-	 * This method returns a pointer (shallow copy) for the
+	 *  
 	 * collection representing all the edges getting out of 
 	 * the given node (all the edges starting (source) at the given node). 
 	 * Note: this method should run in O(k) time, k being the collection size.

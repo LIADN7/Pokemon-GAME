@@ -7,69 +7,107 @@ import gameClient.util.*;
 
 import java.util.*;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
-public class Ex2 {
+public class Ex2 implements Runnable{
+	private static guiFrame frame;
+	private static myGame game;
+	private static HashMap<Integer, LinkedList<node_data>> map;
 
-	/**
-	 * start the project. 
-	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub		
-		game_service g = Game_Server_Ex2.getServer(0);
+		Thread client = new Thread(new Ex2());
+		client.start();
 
-		//build myGame
-		myGame game = new myGame(g);
-		System.out.println("start is good - dont touch");
 
-		//build array of list before the game start
-		HashMap<Integer, LinkedList<node_data>> list = new HashMap<Integer, LinkedList<node_data>>();
-		Iterator<CL_Agent> movea = game.getAsh().iterator();
-		while(movea.hasNext()) {
-			
-			CL_Agent coach = movea.next();
-			LinkedList<node_data> q = game.NearestPoke(coach);
-			list.put(coach.getID(), q);
-		}
-		System.out.println("find the next poemon to go to is good - can start create the GUI");
-		
-		//start the game
-		g.startGame();
-		while(g.isRunning()) {
-			game.stPOKE(g);
-			movea =game.getAsh().iterator();
-			while(movea.hasNext()) {
-				CL_Agent coach = movea.next();
-				if(list.get(coach.getID())==null) {
-					LinkedList<node_data> l = game.NearestPoke(coach);
-					list.get(coach.getID()).addAll(l);
-				}				
-				if(list.get(coach.getID())!=null && coach.get_curr_edge()==null) {
-					node_data node = list.get(coach.getID()).poll();
-					g.chooseNextEdge(coach.getID(), node.getKey());
+	}
+	@Override
+	public void run() {
+		int scenario_num = 7;
+		game_service server = Game_Server_Ex2.getServer(scenario_num);
+		init(server);
+		locateAgent();
+		//paint(server);
+		frame.setTitle("Pokemon game (created by liad and aviel) scenario_num is " + scenario_num);
+		server.startGame();
+		int ind=0;
+		long dt= checkScenario(scenario_num);
+
+		int j = 0;
+		server.startGame();
+		while(server.isRunning()) {
+			server.move();
+			j++;
+			moveAgants(server);
+			try {
+				if(ind%1==0) {
+					frame.repaint();
 				}
+				Thread.sleep(dt);
+				ind++;
 			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		int sum = 0;
+		//System.out.println("login = " + server.login(206192999));
+		for(CL_Agent a : game.getAsh())
+			sum += a.getValue();
+		System.out.println("scenario_num = " + scenario_num + " point = " +  sum + " moves = " + j);
+		System.out.println("end game");
+		server.stopGame();
+	}
 
-			//move
-			g.move();
+	public static void locateAgent() {
+		map = new HashMap<Integer, LinkedList<node_data>>();
+		for(CL_Agent coach : game.getAsh()) {
+			LinkedList<node_data> q = game.NearestPoke(coach);
+			q.poll();
+			map.put(coach.getID(), q);
 		}
 	}
 
-	//draw the graph by "grp" and locate the pokemon by "poke"  on the graph
-	/** 
-	 * Frame frame = new Frame(game);
-	 * Panel panel = new Panel();
-	 * frame.add(panel);
-	 * frame.setVisible(true);
-	 */
+	public static void moveAgants(game_service server) {
+		game.setAgent(server);
+		game.setPokemons(server);
+		for(CL_Agent coach : game.getAsh()) {
+			int id = coach.getID();
+			if(!coach.isMoving()) {
+				if(map.get(id).isEmpty()) {
+					LinkedList<node_data> l = game.NearestPoke(coach);
+					while(!l.isEmpty())
+						map.get(id).add(l.poll()); 
+				}				
+				if(!map.get(id).isEmpty()) {
+					node_data node = map.get(id).poll();
+					server.chooseNextEdge(id, node.getKey());
+				}
+			}
+		}
+	}
 
+	public static void init(game_service server) {
+		game = new myGame(server);
+		frame = new guiFrame();
+		guiPanel panel = new guiPanel(game);
+		frame.add(panel);
+		panel.update(game);
+	}
 
-
-
-
-
+	public static long checkScenario(int num) {
+		if(num == 0) {
+			return 127;  
+		}
+		if(num == 5 || num == 4)
+			return 90;
+		else
+			return 100;
+	}
 }

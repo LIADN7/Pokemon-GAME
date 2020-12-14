@@ -88,7 +88,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 			return -1;
 		}
 		if(src == dest) return 0;
-		return bfs(src,dest);
+		HashMap<Integer,Point> map = bfs(src,dest);
+		if(map.containsKey(dest))
+			return map.get(dest).getWeight();
+		return -1;
 	}
 
 	@Override
@@ -103,7 +106,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 			list.add(t1);
 			return list;
 		}
-		HashMap<Integer,Point> map = bfs1(src,dest);
+		HashMap<Integer,Point> map = bfs(src,dest);
 		if(map == null) {
 			return null;
 		}
@@ -175,39 +178,8 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 	 * @returns the weight of the shortest path between src to dest.
 	 * if no such path --> returns -1
 	 */
-	private double bfs(int src , int dest){
-		LinkedList<Point> qni = new LinkedList<Point>();
-		Point curr = new Point(src);
-		double way = -1;
-		curr.setWeight(1);
-		qni.add(curr);
-		double count = 0;
-		while(!qni.isEmpty()) {
-			boolean bool = false;
-			curr = qni.poll();
-			double weight = curr.getWeight();
-			for(edge_data temp : myGraph.getE(curr.getKey())){
-				int TempN = temp.getDest();
-				Point n = new Point(TempN);
-				count = temp.getWeight() + weight;
-				if(TempN == dest && (way > count || way == -1)) {
-					n.setWeight(count);
-					way = count;
-					bool = true;
-				}
-				else if(n.getWeight() == -1 && !bool) {
-					n.setWeight(count);
-					qni.add(n);
-				}
-			}
-		}
-		if(way >= 0) {
-			return (way-1);
-		}
-		return -1;
-	}
 
-	private HashMap<Integer,Point> bfs1(int src , int dest){
+	private HashMap<Integer,Point> bfs(int src , int dest){
 		HashMap<Integer,Point> map = new HashMap<Integer,Point>();
 		LinkedList<Integer> qtemp = new LinkedList<Integer>();
 		Point curr = new Point(src,0,-1);
@@ -256,7 +228,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 				temp.setPrev(prev);
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	
