@@ -22,6 +22,7 @@ public class myGame {
 	private LinkedList<CL_Pokemon> poke;
 	private List<String> _info;  //maybe to do
 	private int numA;
+
 	
 	public myGame(game_service game) {
 		_info = new ArrayList<String>();

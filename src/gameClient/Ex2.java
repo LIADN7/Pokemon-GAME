@@ -21,6 +21,8 @@ public class Ex2 implements Runnable{
 	private static myGame game;
 	private static HashMap<Integer, LinkedList<node_data>> map;
 
+	
+	
 	public static void main(String[] args) {
 		Thread client = new Thread(new Ex2());
 		client.start();
@@ -29,12 +31,19 @@ public class Ex2 implements Runnable{
 	}
 	@Override
 	public void run() {
-		int scenario_num = 7;
+		
+		guiFrame frame1;
+		frame1 = new guiFrame(0);
+		
+		int scenario_num = frame1.getlvl();
 		game_service server = Game_Server_Ex2.getServer(scenario_num);
 		init(server);
 		locateAgent();
 		//paint(server);
 		frame.setTitle("Pokemon game (created by liad and aviel) scenario_num is " + scenario_num);
+		
+		
+		
 		server.startGame();
 		int ind=0;
 		long dt= checkScenario(scenario_num);
@@ -60,7 +69,9 @@ public class Ex2 implements Runnable{
 		//System.out.println("login = " + server.login(206192999));
 		for(CL_Agent a : game.getAsh())
 			sum += a.getValue();
-		System.out.println("scenario_num = " + scenario_num + " point = " +  sum + " moves = " + j);
+		String score = ""+"scenario_num = " + scenario_num + " point = " +  sum + " moves = " + j;
+		System.out.println(score);
+		frame.addScore(score);
 		System.out.println("end game");
 		server.stopGame();
 	}
@@ -93,12 +104,21 @@ public class Ex2 implements Runnable{
 		}
 	}
 
-	public static void init(game_service server) {
+	public void init(game_service server) {
 		game = new myGame(server);
-		frame = new guiFrame();
-		guiPanel panel = new guiPanel(game);
+
+
+		frame = new guiFrame(1);				
+		
+		guiPanel panel = new guiPanel(game, server);
 		frame.add(panel);
+		
+		SimplePlayer player = new SimplePlayer("./img/music.mp3");
+		Thread playerThread = new Thread(player);
+		playerThread.start();		
 		panel.update(game);
+		
+
 	}
 
 	public static long checkScenario(int num) {
