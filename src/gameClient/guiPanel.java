@@ -1,29 +1,26 @@
 package gameClient;
 
-import java.awt.Color;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.image.ImageObserver;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
-
 import api.*;
 import gameClient.util.*; 
 
 
+/**
+ * represent the panel of the Pokemon game
+ * 
+ * @author liadn7
+ * @author avielc11
+ * 
+ */
 public class guiPanel extends JPanel{
 	private myGame game;
 	private Range2Range _w2f;
 	private game_service server;
-	//	private long time;
-
 
 
 
@@ -31,20 +28,7 @@ public class guiPanel extends JPanel{
 		this.game = game;
 		this.server = server;
 		updatepanel();
-
-
-
-
 	}
-
-
-
-
-
-
-
-
-
 
 
 	public void update(myGame game) {
@@ -52,9 +36,9 @@ public class guiPanel extends JPanel{
 		updatepanel();
 	}
 
+	
+	
 	private void updatepanel() {
-		//		Range rx = new Range(20,this.getWidth()-20);
-		//		Range ry = new Range(this.getHeight()-10,150);
 		Range rx = new Range(this.getHeight()+200,800);
 		Range ry = new Range(500,this.getWidth()+100);
 		Range2D frame = new Range2D(rx,ry);
@@ -62,14 +46,13 @@ public class guiPanel extends JPanel{
 	}
 
 
-
+/**
+ * 
+ * Draws all the panel
+ */
 	public void paint(Graphics g) {
-		int w = this.getWidth();
-		int h = this.getHeight();
-//		g.setColor(Color.orange);
-		Image im = getToolkit().getImage("C:\\eclipse-workspace\\Ex2Year2\\img\\gameIn.jpg");
+		Image im = getToolkit().getImage("./img/gameIn.jpg");
 		g.drawImage(im, 0, 0, this);
-		//g.fill3DRect(0, 0, w, h, true);
 		drawTime(g);
 		drawScore(g);
 		drawPokemon(g);
@@ -78,7 +61,12 @@ public class guiPanel extends JPanel{
 	}
 
 
-	public void drawScore(Graphics g) {
+	/**
+	 * draw score of all agents
+	 * 
+	 * @param g --> Graphics
+	 */
+	private void drawScore(Graphics g) {
 		int y = 15;
 		for(CL_Agent coach : game.getAsh()) {
 			g.setColor(Color.black);
@@ -89,20 +77,25 @@ public class guiPanel extends JPanel{
 
 	}
 
-
-
-
-	public void drawTime(Graphics g) {
+	
+	/**
+	 * draw how much time is left until the end of the game (in seconds)
+	 * 
+	 * @param g --> Graphics
+	 */
+	private void drawTime(Graphics g) {
 		g.setColor(Color.black);
 		g.setFont(new Font("Tahoma", Font.BOLD, 15));
 		g.drawString("time left: " + this.server.timeToEnd()/1000+" seconds", 758, 50);
 	}
 
 
-
-
-
-	public void drawGraph(Graphics g) {
+	/**
+	 * draw the graph
+	 * 
+	 * @param g --> Graphics
+	 */
+	private void drawGraph(Graphics g) {
 		for(node_data node : game.getGraph().getV()) {
 			g.setColor(Color.RED);
 			drawNode(node,g);
@@ -113,7 +106,13 @@ public class guiPanel extends JPanel{
 		}
 	}
 
-	public void drawPokemon(Graphics g) {
+	
+	/**
+	 * draw the Pokemons on the graph
+	 * 
+	 * @param g --> Graphics
+	 */
+	private void drawPokemon(Graphics g) {
 		for(CL_Pokemon poke : game.getPoke()) {
 			double rank = poke.getValue();
 			int typez=poke.getType();
@@ -134,32 +133,47 @@ public class guiPanel extends JPanel{
 		}
 	}
 
+	
+	/**
+	 * If from high node to low node
+	 * 
+	 * @param s --> Pokemon type by bonus amount
+	 * @return File location of the Pokemon
+	 */
 	private String charm(double s) {
-		if(s<=5) return "C:\\eclipse-workspace\\Ex2Year2\\img\\c0.jpeg";
-		else if(s>5&&s<=10) return "C:\\eclipse-workspace\\Ex2Year2\\img\\c1.jpeg";
-		else if(s>10&&s<=14) return "C:\\eclipse-workspace\\Ex2Year2\\img\\c2.jpeg";
-		else return "C:\\eclipse-workspace\\Ex2Year2\\img\\c3.jpeg";
+		if(s<=5) return "./img/c0.jpeg";
+		else if(s>5&&s<=8) return "./img/c1.jpeg";
+		else if(s>8&&s<=12) return "./img/c2.jpeg";
+		else if(s>12&&s<=14) return "./img/c3.jpeg";
+		else return "./img/Lugia.png";
 	}
 	
+	
+	/**
+	 * If from low node to high node
+	 * 
+	 * @param s --> Pokemon type by bonus amount
+	 * @return File location of the Pokemon
+	 */
 	private String squir(double s) {
-		if(s<=5) return "C:\\eclipse-workspace\\Ex2Year2\\img\\s0.jpeg";
-		else if(s>5&&s<=10) return "C:\\eclipse-workspace\\Ex2Year2\\img\\s1.jpeg";
-		else if(s>10&&s<=14) return "C:\\eclipse-workspace\\Ex2Year2\\img\\s2.jpeg";
-		else return "C:\\eclipse-workspace\\Ex2Year2\\img\\s3.jpeg";
+		if(s<=5) return "./img/s0.jpeg";
+		else if(s>5&&s<=8) return "./img/s1.jpeg";
+		else if(s>8&&s<=12) return "./img/s2.jpeg";
+		else if(s>12&&s<=14) return "./img/s3.jpeg";
+		else return "./img/Mewtwo.jpg";
 	}	
 	
 	
-	
-	
-	
-	public void drawAgent(Graphics g) {
-
+	/**
+	 * draw the agent on the graph
+	 * 
+	 * @param g --> Graphics
+	 */
+	private void drawAgent(Graphics g) {
 		for(CL_Agent ash : game.getAsh()) {
 			geo_location pos = ash.getLocation();
 			geo_location fp = this._w2f.world2frame(pos);
-
-			
-			Image im = getToolkit().getImage("C:\\eclipse-workspace\\Ex2Year2\\img\\ash.png");
+			Image im = getToolkit().getImage("./img/ash.png");
 			g.drawImage(im, (int)fp.x()-5, (int)fp.y()-5, this);
 			g.drawString(""+ash.getID(), (int)fp.x(), (int)fp.y()-4*5);
 		}
@@ -167,6 +181,12 @@ public class guiPanel extends JPanel{
 	}
 
 
+	/**
+	 * draw the nodes of the graph
+	 * 
+	 * @param node --> Nodes of the graph
+	 * @param g --> Graphics
+	 */
 	private void drawNode(node_data node , Graphics g) {
 		geo_location pos = node.getLocation();
 		geo_location fp = this._w2f.world2frame(pos);
@@ -176,6 +196,13 @@ public class guiPanel extends JPanel{
 		g.drawString(""+node.getKey(), (int)fp.x(), (int)fp.y()-10);
 	}
 
+	
+	/**
+	 * draw the edges of the graph
+	 * 
+	 * @param e --> Edge of the graph
+	 * @param g --> Graphics
+	 */
 	private void drawEdge(edge_data e, Graphics g) {
 		directed_weighted_graph gg = game.getGraph();
 		geo_location s = gg.getNode(e.getSrc()).getLocation();

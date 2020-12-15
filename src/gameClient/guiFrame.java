@@ -1,8 +1,8 @@
 package gameClient;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -17,50 +17,65 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import api.game_service;
 
 
-
-
-//import org.graalvm.compiler.java.GraphBuilderPhase.Instance;
-
+/**
+ * represent the frame of the Pokemon game
+ * 
+ * @author liadn7
+ * @author avielc11
+ * 
+ */
 public class guiFrame extends JFrame implements ActionListener{
 
+	private MenuItem start;
 	private MenuItem saveResult;
 	private MenuItem log;
 	private MenuItem exit;
 	
+	private JButton btnNewButton;	//Button start the game
 	
-	private JButton btnNewButton;
+	
 	private boolean flag;
 	private int lvl;
 	private JTextField txtPressLevel;
 	private String score;
+	private game_service game;
 	
 	
 	
+	/**
+	 * 
+	 * @return The level was chosen.
+	 */
 	public int getlvl(){return this.lvl;}
-	//	private JPanel contentPane;
-	//	private JTextField txtPressLevel;
 
-	public guiFrame(int x) {
+	
+	/**
+	 * constructor of the frame.
+	 * 
+	 * @param x --> Which frame is it.
+	 * @param game -->the server of the game.
+	 */
+	public guiFrame(int x, game_service game) {
 		if(x==0) {
 			initframe();
 			initpanel();
 			this.setVisible(true);
-
+			this.game=game;
 			addMenu();
 			this.flag = true;
-
+			setTitle("Pokemon game (created by liadn7 and avielc11)");
 			while(flag) {
 				btnNewButton.addActionListener(this);
 			}
 		}
 		else {
 			initframe();
-			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			this.game=game;
 			addMenu();
 			this.flag = true;			
 			this.setVisible(true);
@@ -70,19 +85,19 @@ public class guiFrame extends JFrame implements ActionListener{
 	}
 
 
-
+/**
+ * Determines the default configuration of the frame.
+ * 
+ */
 	public void initframe() {
-		//		this.setTitle("Pokemon game (created by liad and aviel) "); //sets title of frame
 		int frameWidth = 1000;
 	    int frameHeight = 600;
 		ImageIcon image = new ImageIcon("./img/icon.png"); //create an ImageIcon
 		this.setIconImage(image.getImage()); //change icon of frame
-		//this.setSize(1000, 600);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		//setBounds(100, 100, 1000, 600);
 		setBounds((int) screenSize.getWidth() - frameWidth, 0, frameWidth, frameHeight);
 		this.score="null";
-
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
 
@@ -90,48 +105,10 @@ public class guiFrame extends JFrame implements ActionListener{
 	}
 
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == saveResult) save();
-		else if(e.getSource() == btnNewButton)	stringCheck();
-		else if(e.getSource() == exit) System.exit(0);
-		else if(e.getSource() == log);	//aviel do
-	}
-
-
-	private void stringCheck() {
-		String s = this.txtPressLevel.getText();
-		if (s.length()>2)
-			System.out.println("you give a wrong level");
-		else if(s.length()==0) 
-			System.out.println("you dont give a level");
-		else if(s.length()==1) {
-			char c = s.charAt(0);
-			if(c>='0' && c<= '9') {
-				this.lvl = Integer.parseInt(""+c);
-				this.flag = false;
-			}	
-			else
-				System.out.println("you give a wrong level");
-		}
-		else {
-			char c0 = s.charAt(0);
-			char c1 = s.charAt(1);		
-			if((c0=='1' && c1>='0' && c1<= '9')||((c0== '2' && c1>='0' && c1<= '3' ))) {
-				this.lvl = Integer.parseInt(s.substring(0,2));
-				this.flag = false;
-			}	
-			else
-				System.out.println("you give a wrong level");
-
-
-		}
-
-
-	}
-
-
-
+/**
+ * 	Determines the default configuration of the panel.
+ * 
+ */
 	private void initpanel() {
 
 		this.setLayout(null);
@@ -157,6 +134,8 @@ public class guiFrame extends JFrame implements ActionListener{
 			e.printStackTrace();
 		}
 
+		
+		
 		txtPressLevel = new JTextField();
 		txtPressLevel.setText("0");
 		txtPressLevel.setBounds(66, 79, 82, 71);
@@ -173,42 +152,120 @@ public class guiFrame extends JFrame implements ActionListener{
 		this.add(lblNewLabel);
 
 		btnNewButton = new JButton("");
-		btnNewButton.setIcon(new ImageIcon("C:\\eclipse-workspace\\Ex2Year2\\img\\start.png"));
+		btnNewButton.setIcon(new ImageIcon("./img/start.png"));
 		btnNewButton.setBounds(370, 253, 228, 227);
 		this.add(btnNewButton);
 
-	}
-
-
-
-
+	}	
+	
+	
+	/**
+	 * Add all the menu-bar and the item of the menu.
+	 * 
+	 */
 	private void addMenu() {
 		MenuBar menuB = new MenuBar();
 		Menu menu = new Menu("options");
 		menuB.add(menu);
 		this.setMenuBar(menuB);
 		
+		this.start = new MenuItem("Start the game");		
+		this.saveResult = new MenuItem("Save result");
+		this.log = new MenuItem("Upload result to the server");
+		this.exit = new MenuItem("Exit");
+
+		menu.add(this.start);
+		menu.add(this.saveResult);
+		menu.add(this.log);
+		menu.add(this.exit);
 		
-		saveResult = new MenuItem("save result");
-		log = new MenuItem("load result to the server");
-		exit = new MenuItem("Exit");
-		
-		menu.add(saveResult);
-		menu.add(log);
-		menu.add(exit);
-		
-		exit.addActionListener(this);
-		saveResult.addActionListener(this);
-		log.addActionListener(this);
+		this.exit.addActionListener(this);
+		this.saveResult.addActionListener(this);
+		this.log.addActionListener(this);
+		this.start.addActionListener(this);
+	}
+	
+	
+	/**
+	 * Performs an action when a click occurs.
+	 * 
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == saveResult) save();
+		else if(e.getSource() == btnNewButton)	stringCheck();
+		else if(e.getSource() == exit) System.exit(0);
+		else if(e.getSource() == log) logIn();
+		else if(e.getSource() == start) btnNewButton.doClick();
 	}
 
+
+	/**
+	 * Checks if the level is between 0 to 23 --> [0,23]
+	 * and give a messages if wrong else start the game.
+	 */
+	private void stringCheck() {
+		String s = this.txtPressLevel.getText();
+		if (s.length()>2)
+			System.out.println("you give a wrong level");
+		else if(s.length()==0) 
+			System.out.println("you dont give a level");
+		else if(s.length()==1) {
+			char c = s.charAt(0);
+			if(c>='0' && c<= '9') {
+				this.lvl = Integer.parseInt(""+c);
+				this.flag = false;
+			}	
+			else
+				System.out.println("you give a wrong level");
+		}
+		else {
+			char c0 = s.charAt(0);
+			char c1 = s.charAt(1);		
+			if((c0=='1' && c1>='0' && c1<= '9')||((c0== '2' && c1>='0' && c1<= '3' ))) {
+				this.lvl = Integer.parseInt(s.substring(0,2));
+				this.flag = false;
+			}	
+			else
+				System.out.println("you give a wrong level");
+		}
+
+
+	}
+
+	
+	/**
+	 * 
+	 * Puts the result at the end of the game
+	 * @param s --> a string represent the score after the game finish
+	 */
 	public void addScore(String s) {
 		this.score=s;
 	}
+	
+	
+	/**
+	 * 
+	 * Uploads the result to the server.
+	 */
+	private void logIn() {
+		if(this.score.equals("null")) System.out.println("The game is not over yet!!!");
+		else {
+			this.game.login(205485618);
+			this.game.login(206192999);
+			System.out.println("Upload complete!");
+		}
+	
+	}
+	
+	
+	/**
+	 * Save the score on the PC (in the project folder),
+	 * and the name of the file is "score.txt"
+	 */
 	private void save() {
 		try {
 			PrintWriter pw=new PrintWriter(new File("score.txt"));
-
 			pw.write(this.score);
 			pw.close();
 		}

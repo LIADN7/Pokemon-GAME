@@ -33,16 +33,18 @@ public class Ex2 implements Runnable{
 	public void run() {
 		
 		guiFrame frame1;
-		frame1 = new guiFrame(0);
+		frame1 = new guiFrame(0, null);
+		
+
 		
 		int scenario_num = frame1.getlvl();
 		game_service server = Game_Server_Ex2.getServer(scenario_num);
 		init(server);
 		locateAgent();
 		//paint(server);
-		frame.setTitle("Pokemon game (created by liad and aviel) scenario_num is " + scenario_num);
+		frame.setTitle("Pokemon game (created by liadn7 and avielc11) scenario_num is " + scenario_num);
 		
-		
+
 		
 		server.startGame();
 		int ind=0;
@@ -107,9 +109,7 @@ public class Ex2 implements Runnable{
 	public void init(game_service server) {
 		game = new myGame(server);
 
-
-		frame = new guiFrame(1);				
-		
+		frame = new guiFrame(1,server);					
 		guiPanel panel = new guiPanel(game, server);
 		frame.add(panel);
 		
