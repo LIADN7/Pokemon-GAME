@@ -1,6 +1,5 @@
 package gameClient;
 
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,41 +23,28 @@ import api.game_service;
 
 /**
  * represent the frame of the Pokemon game
- * 
  * @author liadn7
  * @author avielc11
  * 
  */
 public class guiFrame extends JFrame implements ActionListener{
-
 	private MenuItem start;
 	private MenuItem saveResult;
 	private MenuItem log;
 	private MenuItem exit;
-	
+
 	private JButton btnNewButton;	//Button start the game
-	
-	
+
 	private boolean flag;
 	private int lvl;
 	private JTextField txtPressLevel;
 	private String score;
 	private game_service game;
-	
-	
-	
-	/**
-	 * 
-	 * @return The level was chosen.
-	 */
-	public int getlvl(){return this.lvl;}
 
-	
 	/**
-	 * constructor of the frame.
-	 * 
+	 * constructor for the frame.
 	 * @param x --> Which frame is it.
-	 * @param game -->the server of the game.
+	 * @param game --> the server of the game.
 	 */
 	public guiFrame(int x, game_service game) {
 		if(x==0) {
@@ -79,41 +65,32 @@ public class guiFrame extends JFrame implements ActionListener{
 			addMenu();
 			this.flag = true;			
 			this.setVisible(true);
-			
+
 		}
 
 	}
 
-
-/**
- * Determines the default configuration of the frame.
- * 
- */
+	/**
+	 * Determines the default configuration of the frame.
+	 */
 	public void initframe() {
 		int frameWidth = 1000;
-	    int frameHeight = 600;
+		int frameHeight = 600;
 		ImageIcon image = new ImageIcon("./img/icon.png"); //create an ImageIcon
 		this.setIconImage(image.getImage()); //change icon of frame
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((int) screenSize.getWidth() - frameWidth, 0, frameWidth, frameHeight);
 		this.score="null";
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-
-
 	}
 
-
-/**
- * 	Determines the default configuration of the panel.
- * 
- */
+	/**
+	 * Determines the default configuration of the panel.
+	 */
 	private void initpanel() {
-
 		this.setLayout(null);
-
 		class ImagePanel extends JComponent {
+			private static final long serialVersionUID = 1L;
 			private Image image;
 			public ImagePanel(Image image) {
 				this.image = image;
@@ -130,12 +107,9 @@ public class guiFrame extends JFrame implements ActionListener{
 			myImage = ImageIO.read(file);
 			this.setContentPane(new ImagePanel(myImage));			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		
-		
 		txtPressLevel = new JTextField();
 		txtPressLevel.setText("0");
 		txtPressLevel.setBounds(66, 79, 82, 71);
@@ -155,10 +129,8 @@ public class guiFrame extends JFrame implements ActionListener{
 		btnNewButton.setIcon(new ImageIcon("./img/start.png"));
 		btnNewButton.setBounds(370, 253, 228, 227);
 		this.add(btnNewButton);
-
 	}	
-	
-	
+
 	/**
 	 * Add all the menu-bar and the item of the menu.
 	 * 
@@ -168,7 +140,7 @@ public class guiFrame extends JFrame implements ActionListener{
 		Menu menu = new Menu("options");
 		menuB.add(menu);
 		this.setMenuBar(menuB);
-		
+
 		this.start = new MenuItem("Start the game");		
 		this.saveResult = new MenuItem("Save result");
 		this.log = new MenuItem("Upload result to the server");
@@ -178,17 +150,16 @@ public class guiFrame extends JFrame implements ActionListener{
 		menu.add(this.saveResult);
 		menu.add(this.log);
 		menu.add(this.exit);
-		
+
 		this.exit.addActionListener(this);
 		this.saveResult.addActionListener(this);
 		this.log.addActionListener(this);
 		this.start.addActionListener(this);
 	}
-	
-	
+
+
 	/**
 	 * Performs an action when a click occurs.
-	 * 
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -229,23 +200,9 @@ public class guiFrame extends JFrame implements ActionListener{
 			else
 				System.out.println("you give a wrong level");
 		}
-
-
 	}
 
-	
 	/**
-	 * 
-	 * Puts the result at the end of the game
-	 * @param s --> a string represent the score after the game finish
-	 */
-	public void addScore(String s) {
-		this.score=s;
-	}
-	
-	
-	/**
-	 * 
 	 * Uploads the result to the server.
 	 */
 	private void logIn() {
@@ -255,12 +212,10 @@ public class guiFrame extends JFrame implements ActionListener{
 			this.game.login(206192999);
 			System.out.println("Upload complete!");
 		}
-	
 	}
-	
-	
+
 	/**
-	 * Save the score on the PC (in the project folder),
+	 * Save the score on the PC (in the project folder)
 	 * and the name of the file is "score.txt"
 	 */
 	private void save() {
@@ -273,7 +228,17 @@ public class guiFrame extends JFrame implements ActionListener{
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Puts the result at the end of the game
+	 * @param s --> a string represent the score after the game finish
+	 */
+	public void addScore(String s) {this.score=s;}
+
+	/**
+	 * @return The level was chosen.
+	 */
+	public int getlvl(){return this.lvl;}
 }
 
 

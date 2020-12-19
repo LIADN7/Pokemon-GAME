@@ -6,26 +6,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import api.*;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
 
+/**
+ * this class save the data of the graph, the pokemon and the agent from the server.
+ * @author liadn7
+ * @author avielc11
+ *
+ */
 public class myGame {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private DWGraph_Algo algo;
 	private LinkedList<CL_Agent> ash;
 	private LinkedList<CL_Pokemon> poke;
-	private List<String> _info;  //maybe to do
 	private int numA;
-
 	
+	/**
+	 * constructor that get server
+	 * @param game - type game_service
+	 */
 	public myGame(game_service game) {
-		_info = new ArrayList<String>();
 		setGraph(game);
 		setPokemons(game);
 		numOfAgent(game);
@@ -58,6 +62,10 @@ public class myGame {
 		}
 	}
 	
+	/**
+	 * get data of the graph as a jason type
+	 * @param game - game service
+	 */
 	public void setGraph(game_service game) {
 		DWGraph_DS grp =new DWGraph_DS();
 		try {
@@ -86,6 +94,10 @@ public class myGame {
 		}
 	}
 	
+	/**
+	 * get data of the pokemon as a jason type
+	 * @param game - game service
+	 */
 	public void setPokemons(game_service game) {
 		this.poke = new  LinkedList<CL_Pokemon>();
 		try {
@@ -107,6 +119,10 @@ public class myGame {
 		}
 	}
 	
+	/**
+	 * get data of the agent as a jason type
+	 * @param game - game service
+	 */
 	public void setAgent(game_service game) {
 		ash =new LinkedList<CL_Agent>();
 		try {
@@ -122,6 +138,10 @@ public class myGame {
 		}
 	}
 	
+	/**
+	 * get number of the agent that aloud to be on the graph as a jason type
+	 * @param game
+	 */
 	public void numOfAgent(game_service game) {
 		String info = game.toString();
 		JSONObject line;
@@ -134,6 +154,11 @@ public class myGame {
 		}
 	}
 	
+	/**
+	 * find the shortest path from the agent to the pokemon
+	 * @param a - the given agent
+	 * @return - LinkedList<node_data>
+	 */
 	public LinkedList<node_data> NearestPoke(CL_Agent a){
 		int start = a.getSrcNode();
 		if(a.get_curr_fruit() == null) {
@@ -161,6 +186,13 @@ public class myGame {
 		return q;
 	}
 	
+	/**
+	 * check which edge_data of the graph the pokemon is.
+	 * @param fr - the given pokemon
+	 * @param g - the given graph
+	 * @return - true if successfully find the edge_data then set for the give pokemon the edge_data and return true.
+	 * else return false.
+	 */
 	public boolean updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
 		while(itr.hasNext()) {
@@ -168,7 +200,7 @@ public class myGame {
 			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
 			while(iter.hasNext()) {
 				edge_data e = iter.next();
-				boolean f = isOnEdge(fr.getLocation(), e,fr.getType(), g);
+				boolean f = isOnEdge1(fr.getLocation(), e,fr.getType(), g);
 				if(f) {
 					fr.set_edge(e);
 					return true;
@@ -178,58 +210,87 @@ public class myGame {
 		return false;
 	}
 
-	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
+	/**
+	 * check if the distance from src to p  plus the distance from the p
+	 * to dest is equal to the the distance from src to dest
+	 * @param p - the location of the pokemon.
+	 * @param src - the location of the start node.
+	 * @param dest - the location of the destination node.
+	 * @return - true if equals
+	 */
+	private static boolean isOnEdge3(geo_location p, geo_location src, geo_location dest ) {
 		boolean ans = false;
 		double dist = src.distance(dest);
 		double d1 = src.distance(p) + p.distance(dest);
 		if(dist>d1-EPS2) {ans = true;}
 		return ans;
 	}
-	private static boolean isOnEdge(geo_location p, int s, int d, directed_weighted_graph g) {
+	
+	/**
+	 * @param p - the location of the pokemon.
+	 * @param s - the key of the start node.
+	 * @param d - the key of the destination node.
+	 * @param g - - the graph.
+	 * @return true or false from the function isOnEdge3(p,src,dest);
+	 */
+	private static boolean isOnEdge2(geo_location p, int s, int d, directed_weighted_graph g) {
 		geo_location src = g.getNode(s).getLocation();
 		geo_location dest = g.getNode(d).getLocation();
-		return isOnEdge(p,src,dest);
+		return isOnEdge3(p,src,dest);
 	}
-	private static boolean isOnEdge(geo_location p, edge_data e, int type, directed_weighted_graph g) {
+	
+	/**
+	 * @param p - the location of the pokemon.
+	 * @param e - the current edge need to check.
+	 * @param type - represent if the pokemon on edge from the high node to the low node.
+	 * @param g - the graph.
+	 * @return true or false from the function isOnEdge2(p,src, dest, g);
+	 */
+	private static boolean isOnEdge1(geo_location p, edge_data e, int type, directed_weighted_graph g) {
 		int src = g.getNode(e.getSrc()).getKey();
 		int dest = g.getNode(e.getDest()).getKey();
 		if(type<0 && dest>src) {return false;}
 		if(type>0 && src>dest) {return false;}
-		return isOnEdge(p,src, dest, g);
+		return isOnEdge2(p,src, dest, g);
 	}	
 	
 	public void updateAge(CL_Agent a,int src , int dest) {
-		edge_data e = algo.getGraph().getEdge(src, dest);
 		a.setNextNode(dest);
 	}
 
-	////////////////////////////////////////////////
-	/////////////getters & setters//////////////////
-	////////////////////////////////////////////////
+	/**
+	 * @return the directed_weighted_graph this game work
+	 */
 	public directed_weighted_graph getGraph() {
 		return algo.getGraph();
 	}
 
+	/**
+	 * @return the agents as a LinkedList
+	 */
 	public LinkedList<CL_Agent> getAsh() {
 		return ash;
 	}
 
+	/**
+	 * @return the Pokemons as a LinkedList
+	 */
 	public LinkedList<CL_Pokemon> getPoke() {
 		return poke;
 	}
 
+	/**
+	 * @return the number of the agent
+	 */
 	public int getNumA() {
 		return numA;
 	}
 	
-	public List<String> get_info() {
-		return _info;
-	}
-	
-	////////////////////////////////////////////////
-	//////////////////// RANGE /////////////////////
-	////////////////////////////////////////////////
-	
+	/**
+	 * Translate the location of the nodes, the pokemon and the agent to the location on the screen(panel)
+	 * @param g - graph
+	 * @return
+	 */
 	private static Range2D GraphRange(directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
 		double x0=0,x1=0,y0=0,y1=0;

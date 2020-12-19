@@ -6,31 +6,35 @@ import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.*;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
+/**
+ * this class present all the algorithms that can make on graph
+ * find the shortest path from one node to another
+ * save to information of the current graph on file
+ * and load from file the information of graph 
+ * @author liadn7
+ * @author avielc11
+ *
+ */
 public class DWGraph_Algo implements dw_graph_algorithms{
 	private directed_weighted_graph myGraph;
 
+	/**
+	 * default constructor
+	 */
 	public DWGraph_Algo() {
 		this.myGraph = new DWGraph_DS();
 	}
 
 	@Override
 	public void init(directed_weighted_graph g) {
-		// TODO Auto-generated method stub
 		myGraph = g;
-
 	}
 
 	@Override
 	public directed_weighted_graph getGraph() {
-		// TODO Auto-generated method stub
 		return myGraph;
 	}
 
@@ -51,16 +55,13 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
 	@Override
 	public boolean isConnected() {
-		// TODO Auto-generated method stub
 		if(myGraph.nodeSize() <= 1) {
 			return true;
 		}
 		LinkedList<Integer> moves = new LinkedList<Integer>();
 		HashMap<Integer,String> in = new HashMap<Integer,String>();
 		int num = myGraph.getV().iterator().next().getKey();
-
 		moves.add(num);
-
 		while(!moves.isEmpty()) {
 			int tempNum = moves.poll();
 			if(myGraph.getE(tempNum).size() == 0) {
@@ -78,12 +79,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 			return true;
 		}
 		return false;
-
 	}
 
 	@Override
 	public double shortestPathDist(int src, int dest) {
-		// TODO Auto-generated method stub
 		if(myGraph.getNode(src) == null || myGraph.getNode(dest) == null) {
 			return -1;
 		}
@@ -96,7 +95,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
 	@Override
 	public List<node_data> shortestPath(int src, int dest) {
-		// TODO Auto-generated method stub
 		node_data t1 = myGraph.getNode(src);
 		LinkedList<node_data> list = new LinkedList<node_data>();
 		if(t1 == null || myGraph.getNode(dest) == null) {
@@ -173,6 +171,8 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 	}
 
 	/**
+	 * get two keys - one for the start node and the other for the node need to 
+	 * find the path to it
 	 * @param start node.
 	 * @param dest - end (target) node.
 	 * @returns the weight of the shortest path between src to dest.
@@ -215,6 +215,15 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		return null;
 	}
 
+	/**
+	 * check if the hashmap(from function bfs) is already see the node if not then create new one
+	 * else check the weight is smaller than the one inside
+	 * @param node - the key of the node
+	 * @param weight - the weight from src until here
+	 * @param prev - the node connect to the current node and has the shortest path
+	 * @param map - the hashmap contains all the node(as a Point)
+	 * @return - true if not contains
+	 */
 	private boolean update(int node, double weight, int prev, HashMap<Integer,Point> map) {
 		if(!map.containsKey(node)) {
 			Point temp = new Point(node,weight,prev);

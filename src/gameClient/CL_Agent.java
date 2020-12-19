@@ -1,16 +1,21 @@
 package gameClient;
 
+/**
+ * this class represent a agent that get his information from the server
+ */
+import gameClient.util.*;
+
+import org.json.JSONObject;
+
 import api.directed_weighted_graph;
 import api.edge_data;
 import api.geo_location;
 import api.node_data;
-import gameClient.util.Point3D;
-import org.json.JSONObject;
 
 public class CL_Agent {
 		public static final double EPS = 0.0001;
-		private static int _count = 0;
-		private static int _seed = 3331;
+//		private static int _count = 0;
+//		private static int _seed = 3331;
 		private int _id;
 	//	private long _key;
 		private geo_location _pos;
@@ -89,7 +94,7 @@ public class CL_Agent {
 			this._curr_node = _gg.getNode(src);
 		}
 		public boolean isMoving() {
-			return this._curr_edge!=null;
+			return this._curr_edge != null;
 		}
 		public String toString() {
 			return toJSON();
@@ -114,12 +119,11 @@ public class CL_Agent {
 			return this._value;
 		}
 
-
-
 		public int getNextNode() {
 			int ans = -2;
 			if(this._curr_edge==null) {
-				ans = -1;}
+				ans = -1;
+			}
 			else {
 				ans = this._curr_edge.getDest();
 			}

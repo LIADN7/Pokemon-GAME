@@ -6,14 +6,15 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/annotations-13.0.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/Ex2_Server_v0.13.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/gson-2.8.6.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/java-json.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/kotlin-stdlib-1.3.72.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/kotlin-stdlib-common-1.3.70.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/okhttp-4.8.0.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Ex2Year2/src/libs/okio-2.7.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="src/libs/annotations-13.0.jar"/>
+	<classpathentry kind="lib" path="src/libs/Ex2_Server_v0.13.jar"/>
+	<classpathentry kind="lib" path="src/libs/gson-2.8.6.jar"/>
+	<classpathentry kind="lib" path="src/libs/java-json.jar"/>
 	<classpathentry kind="lib" path="src/libs/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="src/libs/kotlin-stdlib-1.3.72.jar"/>
+	<classpathentry kind="lib" path="src/libs/kotlin-stdlib-common-1.3.70.jar"/>
+	<classpathentry kind="lib" path="src/libs/okhttp-4.8.0.jar"/>
+	<classpathentry kind="lib" path="src/libs/okio-2.7.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

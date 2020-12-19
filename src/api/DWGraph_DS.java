@@ -2,11 +2,28 @@ package api;
 
 import java.util.*;
 
+/**
+ * this class is presenting a directional weighted (positive) graph. . 
+ * the graph is contains nodes who are very similar to dots inside regular graph
+ * in this class we can add and delete nodes , connect between them or disconnect,
+ * who connect to who is important.
+ * get know the edge between two nodes if there is any and get the information of 
+ * any node inside the graph. 
+ * all the nodes must have a unique key.
+ * in addition - the graph remember the number of nodes, edges and 
+ * how many changes was make.
+ * @author liadn7
+ * @author avielc11
+ */
 public class DWGraph_DS implements directed_weighted_graph {
 	private int edgeSize , nodeSize, change;
 	private HashMap<Integer,node_data> nodes;
 	private HashMap<Integer,Connection> ribs;
 	
+	/**
+	 * constructor1 - build a new graph. 
+	 * the graph has no edges,nodes and no changes was make.
+	 */
 	public DWGraph_DS() {
 		edgeSize = 0;
 		nodeSize = 0;
@@ -17,7 +34,6 @@ public class DWGraph_DS implements directed_weighted_graph {
 	
 	@Override
 	public node_data getNode(int key) {
-		// TODO Auto-generated method stub
 		if(nodes.containsKey(key)) {
 			return nodes.get(key);
 		}
@@ -26,18 +42,18 @@ public class DWGraph_DS implements directed_weighted_graph {
 
 	@Override
 	public edge_data getEdge(int src, int dest) {
-		// TODO Auto-generated method stub
-		if(nodes.containsKey(src)) {
-			Connection temp = ribs.get(src);
-			edge_data e = temp.getEdge(dest);
-			return e;
+		if(src != dest) {
+			if(nodes.containsKey(src)) {
+				Connection temp = ribs.get(src);
+				edge_data e = temp.getEdge(dest);
+				return e;
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public void addNode(node_data n) {
-		// TODO Auto-generated method stub
 		Connection temp = new Connection(n.getKey());
 		nodes.put(n.getKey(),(Nodes) n);
 		ribs.put(temp.getKey(), temp);
@@ -47,12 +63,10 @@ public class DWGraph_DS implements directed_weighted_graph {
 
 	@Override
 	public void connect(int src, int dest, double w) {
-		// TODO Auto-generated method stub
-		if(w >= 0) {
+		if(w >= 0 && src != dest) {
 			if(getNode(src) != null && getNode(dest) != null) {
 				Connection t1 = ribs.get(src);
 				Connection t2 = ribs.get(dest);
-				//Nodes t2 = (Nodes) getNode(dest);
 				t1.addTo(dest, w);
 				t2.addFrom(src);
 				edgeSize++;
@@ -68,19 +82,17 @@ public class DWGraph_DS implements directed_weighted_graph {
 
 	@Override
 	public Collection<edge_data> getE(int node_id) {
-		// TODO Auto-generated method stub
 		return ribs.get(node_id).getF();
 	}
 
 	@Override
 	public node_data removeNode(int key) {
-		// TODO Auto-generated method stub
 		if(getNode(key) != null) {
 			node_data temp = getNode(key);
 			for(int num : ribs.get(key).getB()) {
 				Connection n = ribs.get(num);
-				n.removeNodeF(key);
-				edgeSize--;
+				if(n.removeNodeF(key))
+					edgeSize--;
 			}
 			for(edge_data n : ribs.get(key).getF()) {
 				Connection behind = ribs.get(n.getDest());
@@ -98,43 +110,43 @@ public class DWGraph_DS implements directed_weighted_graph {
 	
 	@Override
 	public edge_data removeEdge(int src, int dest) {
-		// TODO Auto-generated method stub
-		if(getNode(src) != null && getNode(dest) != null) {
-			Connection t1 = ribs.get(src);
-			Connection t2 = ribs.get(dest);
-			edge_data e = t1.getEdge(dest);
-			if(e != null) {
-				t1.removeNodeF(dest);
-				t2.removeNodeB(src);
-				edgeSize--;
-				change++;
+		if(src != dest) {
+			if(getNode(src) != null && getNode(dest) != null) {
+				Connection t1 = ribs.get(src);
+				Connection t2 = ribs.get(dest);
+				edge_data e = t1.getEdge(dest);
+				if(e != null) {
+					t1.removeNodeF(dest);
+					t2.removeNodeB(src);
+					edgeSize--;
+					change++;
+				}
+				return e;
 			}
-			return e;
 		}
 		return null;
 	}
 
 	@Override
 	public int nodeSize() {
-		// TODO Auto-generated method stub
 		return nodeSize;
 	}
 
 	@Override
 	public int edgeSize() {
-		// TODO Auto-generated method stub
 		return edgeSize;
 	}
 
 	@Override
 	public int getMC() {
-		// TODO Auto-generated method stub
 		return change;
 	}
 	
+	/**
+	 * chack if two graphs is equals
+	 */
 	@Override
 	public boolean equals(Object b) {
-		// TODO Auto-generated method stub
 		if(this == b) {
 			return true;
 		}
