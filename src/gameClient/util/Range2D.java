@@ -3,6 +3,7 @@ import api.geo_location;
 
 /**
  * This class represents a 2D Range, composed from two 1D Ranges.
+ * @author boaz.benmoshe
  */
 public class Range2D {
 	private Range _y_range;

@@ -140,7 +140,7 @@ public class myGame {
 	
 	/**
 	 * get number of the agent that aloud to be on the graph as a jason type
-	 * @param game
+	 * @param game - type game_service
 	 */
 	public void numOfAgent(game_service game) {
 		String info = game.toString();
@@ -157,7 +157,7 @@ public class myGame {
 	/**
 	 * find the shortest path from the agent to the pokemon
 	 * @param a - the given agent
-	 * @return - LinkedList<node_data>
+	 * @return LinkedList of all node_data that go between the agent to the pokemon
 	 */
 	public LinkedList<node_data> NearestPoke(CL_Agent a){
 		int start = a.getSrcNode();

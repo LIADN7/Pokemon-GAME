@@ -66,7 +66,7 @@ public class Point {
 	}
 
 	/**
-	 * @param w - this.weight will be equal to w.
+	 * @param weight - this.weight will be equal to w.
 	 */
 	public void setWeight(double weight) {
 		this.weight = weight;

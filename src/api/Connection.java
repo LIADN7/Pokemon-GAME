@@ -60,7 +60,7 @@ public class Connection {
 	}
 
 	/**
-	 * return the edge the edge between 
+	 * return the edge between 
 	 * @param dest - represent the key of the destination node
 	 * @return edge_data
 	 */
@@ -73,7 +73,7 @@ public class Connection {
 
 	/**
 	 * return all the edge_data that start from this node
-	 * @return Collection<edge_data>
+	 * @return the Collection of all the edge_data
 	 */
 	public  Collection<edge_data> getF() {
 		return forward.values();
@@ -81,7 +81,7 @@ public class Connection {
 
 	/**
 	 * return all the number of the node that has path to this node
-	 * @return Collection<Integer>
+	 * @return the Collection of the number
 	 */
 	public  Collection<Integer> getB() {
 		return backwards.values();
@@ -90,6 +90,7 @@ public class Connection {
 	/**
 	 * delete the edge_data that his destination is the given node
 	 * @param node - the key of the destination node
+	 * @return true if contains the node and succesefully deleted
 	 */
 	public boolean removeNodeF(int node) {
 		if(forward.containsKey(node)) {
@@ -110,7 +111,7 @@ public class Connection {
 
 	/**
 	 * the key of this rib
-	 * @return int - the key of the rib.
+	 * @return the key of the rib.
 	 */
 	public int getKey() {
 		return key;

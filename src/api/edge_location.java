@@ -6,13 +6,11 @@ package api;
  */
 public interface edge_location {
     /**
-     * Returns the edge on which the location is.
-     * @return
+     * @return the edge on which the location is.
      */
     public edge_data getEdge();
     /**
-     * Returns the relative ration [0,1] of the location between src and dest.
-     * @return
+     * @return the relative ration [0,1] of the location between src and dest.
      */
     public double getRatio();
 }

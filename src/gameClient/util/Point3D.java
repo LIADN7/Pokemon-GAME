@@ -1,12 +1,13 @@
-/**
- * This class represents a 3D point in space.
- */
 package gameClient.util;
 
 import api.geo_location;
 
 import java.io.Serializable;
 
+/**
+ * This class represents a 3D point in space.
+ * @author boaz.benmoshe
+ */
 public class Point3D implements geo_location, Serializable{
 	private static final long serialVersionUID = 1L;
 	/**
@@ -23,9 +24,19 @@ public class Point3D implements geo_location, Serializable{
         _z=z;
     }
 
+    /**
+     * copy constructor from another Point3D
+     * @param p - type Point3D 
+     */
     public Point3D(Point3D p) {
        this(p.x(), p.y(), p.z());
     }
+    
+    /**
+     * constructor take the details from only two point - x and y.
+     * @param x - type double.
+     * @param y - type double.
+     */
     public Point3D(double x, double y) {this(x,y,0);}
     public Point3D(String s) { try {
             String[] a = s.split(",");
@@ -45,7 +56,7 @@ public class Point3D implements geo_location, Serializable{
     @Override
     public double z() {return _z;}
 
-
+    
     public String toString() { return _x+","+_y+","+_z; }
     @Override
     public double distance(geo_location p2) {

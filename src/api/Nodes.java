@@ -46,7 +46,7 @@ public class Nodes implements node_data {
 	/**
 	 * constructor that get the key of another node_data and set the location 
 	 * @param id - the key of another node_data
-	 * @param e
+	 * @param e - the location
 	 */
 	public Nodes(int id, geo_location e) {
 		if(id > defaulttkey)

@@ -96,7 +96,7 @@ public class Ex2 implements Runnable{
 	/**
 	 * update the data about the pokemon and the agent.
 	 * f the agent does not move then move it towards the next node in the list towards the Pokemon
-	 * @param server
+	 * @param server - type game_service
 	 */
 	public static void moveAgants(game_service server) {
 		game.setAgent(server);

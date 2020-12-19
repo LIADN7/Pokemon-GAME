@@ -43,8 +43,8 @@ public class guiFrame extends JFrame implements ActionListener{
 
 	/**
 	 * constructor for the frame.
-	 * @param x --> Which frame is it.
-	 * @param game --> the server of the game.
+	 * @param x - Which frame is it.
+	 * @param game -  the server of the game.
 	 */
 	public guiFrame(int x, game_service game) {
 		if(x==0) {
@@ -231,7 +231,7 @@ public class guiFrame extends JFrame implements ActionListener{
 
 	/**
 	 * Puts the result at the end of the game
-	 * @param s --> a string represent the score after the game finish
+	 * @param s - a string represent the score after the game finish
 	 */
 	public void addScore(String s) {this.score=s;}
 
