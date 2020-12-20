@@ -46,7 +46,7 @@ public class Temp  implements Runnable{
 		locateAgent();
 		
 		frame.setTitle("Pokemon game (created by liadn7 and avielc11) scenario_num is " + scenario_num);
-		//frame.addId(frame1);
+		frame.addId(frame1);
 		server.startGame();
 		int ind=0;
 		long dt= checkScenario(scenario_num);
