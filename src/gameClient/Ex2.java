@@ -30,9 +30,20 @@ public class Ex2 implements Runnable{
 	 */
 	@Override
 	public void run() {
-		
+
 		guiFrame frame1;
 		frame1 = new guiFrame(0, null);
+		
+		//waiting for select level
+		while(frame1.getFlag()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		frame1.dispose();
 		SimplePlayer player = new SimplePlayer("./img/music.mp3");
 		Thread playerThread = new Thread(player);
@@ -42,7 +53,7 @@ public class Ex2 implements Runnable{
 		init(server);
 		locateAgent();
 		frame.setTitle("Pokemon game (created by liadn7 and avielc11) scenario_num is " + scenario_num);
-		
+		frame.addId(frame1);
 		server.startGame();
 		int ind=0;
 		long dt= checkScenario(scenario_num);
@@ -70,11 +81,11 @@ public class Ex2 implements Runnable{
 		String score = ""+"scenario_num = " + scenario_num + " point = " +  sum + " moves = " + j;
 		System.out.println(score);
 		frame.addScore(score);
-		guiSave finish = new guiSave();
-		if(finish.getYON() == 0) {
-			System.out.println("login = " + server.login(206192999));
-		}
-		finish.dispose();
+		//		guiSave finish = new guiSave();
+		//		if(finish.getYON() == 0) {
+		//			System.out.println("login = " + server.login(206192999));
+		//		}
+		//		finish.dispose();
 		System.out.println("end game");
 		playerThread.stop();
 		server.stopGame();
@@ -103,13 +114,6 @@ public class Ex2 implements Runnable{
 		game.setPokemons(server);
 		for(CL_Agent coach : game.getAsh()) {
 			int id = coach.getID();
-//			if(game.getNumA() >= 2) {
-//				if(!coach.isMoving()) {
-//					LinkedList<node_data> l = game.NearestPoke(coach);
-//					if(!l.isEmpty())
-//						server.chooseNextEdge(id, l.poll().getKey());
-//				}
-//			}
 			if(!coach.isMoving()) {
 				if(map.get(id).isEmpty()) {
 					LinkedList<node_data> l = game.NearestPoke(coach);
@@ -134,7 +138,7 @@ public class Ex2 implements Runnable{
 		guiPanel panel = new guiPanel(game, server);
 		frame.add(panel);		
 		panel.update(game);
-		
+
 
 	}
 

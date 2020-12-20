@@ -35,12 +35,15 @@ public class guiFrame extends JFrame implements ActionListener{
 
 	private JButton btnNewButton;	//Button start the game
 
+	private JTextField txtPressLevel;	
+	private JTextField ID;
+
 	private boolean flag;
 	private int lvl;
-	private JTextField txtPressLevel;
 	private String score;
 	private game_service game;
-
+	private long idLong;
+	
 	/**
 	 * constructor for the frame.
 	 * @param x - Which frame is it.
@@ -54,18 +57,15 @@ public class guiFrame extends JFrame implements ActionListener{
 			this.game=game;
 			addMenu();
 			this.flag = true;
-			setTitle("Pokemon game (created by liadn7 and avielc11)");
-			while(flag) {
-				btnNewButton.addActionListener(this);
-			}
+			setTitle("Pokemon game (created by liadn7 and avielc11)");			
+			btnNewButton.addActionListener(this);		
 		}
 		else {
 			initframe();
 			this.game=game;
 			addMenu();
-			this.flag = true;			
+			this.flag = true;
 			this.setVisible(true);
-
 		}
 
 	}
@@ -129,6 +129,23 @@ public class guiFrame extends JFrame implements ActionListener{
 		btnNewButton.setIcon(new ImageIcon("./img/start.png"));
 		btnNewButton.setBounds(370, 253, 228, 227);
 		this.add(btnNewButton);
+
+
+		JLabel lblNewLabel1 = new JLabel("Player id:");
+		lblNewLabel1.setForeground(Color.WHITE);
+		lblNewLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel1.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		lblNewLabel1.setBounds(10, 161, 128, 57);
+		this.add(lblNewLabel1);
+
+		this.ID = new JTextField();
+		ID.setFont(new Font("Tahoma", Font.BOLD, 18));
+		ID.setText("205485618");
+		ID.setBounds(150, 161, 110, 71);
+		this.add(ID);
+		ID.setColumns(10);
+
+
 	}	
 
 	/**
@@ -164,53 +181,93 @@ public class guiFrame extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == saveResult) save();
-		else if(e.getSource() == btnNewButton)	stringCheck();
+		else if(e.getSource() == btnNewButton)	clickCheck();
 		else if(e.getSource() == exit) System.exit(0);
 		else if(e.getSource() == log) logIn();
 		else if(e.getSource() == start) btnNewButton.doClick();
+	}
+
+/**
+ * Checks if the user entered a correct values 
+ * 
+ */
+	private void clickCheck() {
+		boolean a = lvlCheck();
+		boolean b = idCheck();		
+		this.flag =!(a && b);
 	}
 
 
 	/**
 	 * Checks if the level is between 0 to 23 --> [0,23]
 	 * and give a messages if wrong else start the game.
+	 * @return true if the level is ok else false
 	 */
-	private void stringCheck() {
+	private boolean lvlCheck() {
 		String s = this.txtPressLevel.getText();
-		if (s.length()>2)
-			System.out.println("you give a wrong level");
-		else if(s.length()==0) 
-			System.out.println("you dont give a level");
-		else if(s.length()==1) {
+		if (s.length() > 2 || s.length() == 0) {
+			ErrorFrame ero = new ErrorFrame("you give a wrong level");
+			return false;
+		}		
+		else if(s.length() == 1) {
 			char c = s.charAt(0);
-			if(c>='0' && c<= '9') {
+			if(c >= '0' && c <= '9') {
 				this.lvl = Integer.parseInt(""+c);
-				this.flag = false;
+				return true;
 			}	
-			else
-				System.out.println("you give a wrong level");
+			else {
+				ErrorFrame ero = new ErrorFrame("you give a wrong level!");
+				return false;
+			}	
 		}
-		else {
+		else{
 			char c0 = s.charAt(0);
 			char c1 = s.charAt(1);		
 			if((c0=='1' && c1>='0' && c1<= '9')||((c0== '2' && c1>='0' && c1<= '3' ))) {
 				this.lvl = Integer.parseInt(s.substring(0,2));
-				this.flag = false;
+				return true;
 			}	
-			else
-				System.out.println("you give a wrong level");
+			else {
+				ErrorFrame ero = new ErrorFrame("you give a wrong level!");
+				return false;
+			}
 		}
+	}
+
+
+	/**
+	 * Checks if the id is ok
+	 * and give a messages if wrong else start the game.
+	 * @return true if the id is ok else false
+	 */
+	private boolean idCheck() {
+		String s = this.ID.getText();
+		if(s.length()!=9) {
+			ErrorFrame ero = new ErrorFrame("you give a wrong id!");
+			return false;
+		}
+		else {
+			for(int i=0;i<9;i++) {
+				char c = s.charAt(i);
+				if(c < '0' || c > '9') {
+					ErrorFrame ero = new ErrorFrame("you give a wrong id!");
+					return false;
+				}		
+			}
+		}
+		return true;
 	}
 
 	/**
 	 * Uploads the result to the server.
 	 */
 	private void logIn() {
-		if(this.score.equals("null")) System.out.println("The game is not over yet!!!");
+		if(this.score.equals("null")) {
+			ErrorFrame ero = new ErrorFrame("The game is not over yet!!!");
+		}
 		else {
-			this.game.login(205485618);
-			this.game.login(206192999);
-			System.out.println("Upload complete!");
+			this.game.login(this.idLong);
+			JOptionPane.showMessageDialog(null, "Upload complete!");
 		}
 	}
 
@@ -239,6 +296,19 @@ public class guiFrame extends JFrame implements ActionListener{
 	 * @return The level was chosen.
 	 */
 	public int getlvl(){return this.lvl;}
+
+	/**
+	 * Updates ID from the main frame
+	 * @param f --> the main frame
+	 */
+	public void addId(guiFrame f) {this.idLong = Long.parseLong(f.ID.getText());}
+	 
+	
+/**
+ * 
+ * @return flag -> if the game start flag is false
+ */
+	public boolean getFlag() {return this.flag;}
 }
 
 
