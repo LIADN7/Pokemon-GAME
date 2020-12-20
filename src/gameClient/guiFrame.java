@@ -280,7 +280,7 @@ public class guiFrame extends JFrame implements ActionListener{
 	 */
 	private void logIn() {
 		if(this.score.equals("null")) {
-//			ErrorFrame ero = new ErrorFrame("The game is not over!");
+			ErrorFrame ero = new ErrorFrame("The game is not over!");
 		}
 		else {
 			this.game.login(this.idLong);
@@ -295,7 +295,7 @@ public class guiFrame extends JFrame implements ActionListener{
 	 */
 	private void save() {
 		if(this.score.equals("null")) {
-//			ErrorFrame ero = new ErrorFrame("The game is not over!");
+			ErrorFrame ero = new ErrorFrame("The game is not over!");
 		}
 		else {
 			try {
