@@ -81,11 +81,6 @@ public class Ex2 implements Runnable{
 		String score = ""+"scenario_num = " + scenario_num + " point = " +  sum + " moves = " + j;
 		System.out.println(score);
 		frame.addScore(score);
-		//		guiSave finish = new guiSave();
-		//		if(finish.getYON() == 0) {
-		//			System.out.println("login = " + server.login(206192999));
-		//		}
-		//		finish.dispose();
 		System.out.println("end game");
 		playerThread.stop();
 		server.stopGame();

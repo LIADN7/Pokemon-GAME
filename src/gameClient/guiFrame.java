@@ -43,7 +43,7 @@ public class guiFrame extends JFrame implements ActionListener{
 	private String score;
 	private game_service game;
 	private long idLong;
-	
+
 	/**
 	 * constructor for the frame.
 	 * @param x - Which frame is it.
@@ -64,7 +64,7 @@ public class guiFrame extends JFrame implements ActionListener{
 			initframe();
 			this.game=game;
 			addMenu();
-			this.flag = true;
+			this.flag = false;
 			this.setVisible(true);
 		}
 
@@ -82,6 +82,7 @@ public class guiFrame extends JFrame implements ActionListener{
 		setBounds((int) screenSize.getWidth() - frameWidth, 0, frameWidth, frameHeight);
 		this.score="null";
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setResizable(false);
 	}
 
 	/**
@@ -184,13 +185,26 @@ public class guiFrame extends JFrame implements ActionListener{
 		else if(e.getSource() == btnNewButton)	clickCheck();
 		else if(e.getSource() == exit) System.exit(0);
 		else if(e.getSource() == log) logIn();
-		else if(e.getSource() == start) btnNewButton.doClick();
+		else if(e.getSource() == start) startClick();
 	}
 
-/**
- * Checks if the user entered a correct values 
- * 
- */
+	/**
+	 * Checks if the game already start.
+	 * 
+	 */
+	private void startClick() {
+		if(this.flag)
+			btnNewButton.doClick();
+		else{
+			ErrorFrame ero = new ErrorFrame("The game already start");
+		}
+	}
+
+
+	/**
+	 * Checks if the user entered a correct values 
+	 * 
+	 */
 	private void clickCheck() {
 		boolean a = lvlCheck();
 		boolean b = idCheck();		
@@ -206,7 +220,7 @@ public class guiFrame extends JFrame implements ActionListener{
 	private boolean lvlCheck() {
 		String s = this.txtPressLevel.getText();
 		if (s.length() > 2 || s.length() == 0) {
-			ErrorFrame ero = new ErrorFrame("you give a wrong level");
+			ErrorFrame ero = new ErrorFrame("You give a wrong level");
 			return false;
 		}		
 		else if(s.length() == 1) {
@@ -216,7 +230,7 @@ public class guiFrame extends JFrame implements ActionListener{
 				return true;
 			}	
 			else {
-				ErrorFrame ero = new ErrorFrame("you give a wrong level!");
+				ErrorFrame ero = new ErrorFrame("You give a wrong level!");
 				return false;
 			}	
 		}
@@ -228,7 +242,7 @@ public class guiFrame extends JFrame implements ActionListener{
 				return true;
 			}	
 			else {
-				ErrorFrame ero = new ErrorFrame("you give a wrong level!");
+				ErrorFrame ero = new ErrorFrame("You give a wrong level!");
 				return false;
 			}
 		}
@@ -243,14 +257,14 @@ public class guiFrame extends JFrame implements ActionListener{
 	private boolean idCheck() {
 		String s = this.ID.getText();
 		if(s.length()!=9) {
-			ErrorFrame ero = new ErrorFrame("you give a wrong id!");
+			ErrorFrame ero = new ErrorFrame("You give a wrong id!");
 			return false;
 		}
 		else {
 			for(int i=0;i<9;i++) {
 				char c = s.charAt(i);
 				if(c < '0' || c > '9') {
-					ErrorFrame ero = new ErrorFrame("you give a wrong id!");
+					ErrorFrame ero = new ErrorFrame("You give a wrong id!");
 					return false;
 				}		
 			}
@@ -263,7 +277,7 @@ public class guiFrame extends JFrame implements ActionListener{
 	 */
 	private void logIn() {
 		if(this.score.equals("null")) {
-			ErrorFrame ero = new ErrorFrame("The game is not over yet!!!");
+			ErrorFrame ero = new ErrorFrame("The game is not over!");
 		}
 		else {
 			this.game.login(this.idLong);
@@ -271,18 +285,25 @@ public class guiFrame extends JFrame implements ActionListener{
 		}
 	}
 
+	
 	/**
 	 * Save the score on the PC (in the project folder)
 	 * and the name of the file is "score.txt"
 	 */
 	private void save() {
-		try {
-			PrintWriter pw=new PrintWriter(new File("score.txt"));
-			pw.write(this.score);
-			pw.close();
+		if(this.score.equals("null")) {
+			ErrorFrame ero = new ErrorFrame("The game is not over!");
 		}
-		catch(FileNotFoundException e){
-			e.printStackTrace();
+		else {
+			try {
+				PrintWriter pw=new PrintWriter(new File("score.txt"));
+				pw.write(this.score);
+				pw.close();
+				JOptionPane.showMessageDialog(null, "Save score complete!");
+			}
+			catch(FileNotFoundException e){
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -302,12 +323,12 @@ public class guiFrame extends JFrame implements ActionListener{
 	 * @param f --> the main frame
 	 */
 	public void addId(guiFrame f) {this.idLong = Long.parseLong(f.ID.getText());}
-	 
-	
-/**
- * 
- * @return flag -> if the game start flag is false
- */
+
+
+	/**
+	 * 
+	 * @return flag -> if the game start flag is false
+	 */
 	public boolean getFlag() {return this.flag;}
 }
 
