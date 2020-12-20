@@ -1,25 +1,21 @@
 package gameClient;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JFormattedTextField;
-import javax.swing.JList;
-import javax.swing.JTextArea;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import java.awt.Toolkit;
-import java.awt.Window.Type;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 
 public class ErrorFrame extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
 

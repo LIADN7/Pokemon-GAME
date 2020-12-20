@@ -16,6 +16,10 @@ import gameClient.util.*;
  * @author avielc11
  */
 public class guiPanel extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private myGame game;
 	private Range2Range _w2f;
 	private game_service server;

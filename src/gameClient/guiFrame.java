@@ -28,6 +28,10 @@ import api.game_service;
  * 
  */
 public class guiFrame extends JFrame implements ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private MenuItem start;
 	private MenuItem saveResult;
 	private MenuItem log;
@@ -39,7 +43,6 @@ public class guiFrame extends JFrame implements ActionListener{
 	private JTextField ID;
 
 	private boolean flag;
-	private int lvl;
 	private String score;
 	private game_service game;
 	private long idLong;
@@ -141,7 +144,7 @@ public class guiFrame extends JFrame implements ActionListener{
 
 		this.ID = new JTextField();
 		ID.setFont(new Font("Tahoma", Font.BOLD, 18));
-		ID.setText("205485618");
+		ID.setText(Ex2.ID);
 		ID.setBounds(150, 161, 110, 71);
 		this.add(ID);
 		ID.setColumns(10);
@@ -196,7 +199,7 @@ public class guiFrame extends JFrame implements ActionListener{
 		if(this.flag)
 			btnNewButton.doClick();
 		else{
-			ErrorFrame ero = new ErrorFrame("The game already start");
+//			ErrorFrame ero = new ErrorFrame("The game already start");
 		}
 	}
 
@@ -220,17 +223,17 @@ public class guiFrame extends JFrame implements ActionListener{
 	private boolean lvlCheck() {
 		String s = this.txtPressLevel.getText();
 		if (s.length() > 2 || s.length() == 0) {
-			ErrorFrame ero = new ErrorFrame("You give a wrong level");
+//			ErrorFrame ero = new ErrorFrame("You give a wrong level");
 			return false;
 		}		
 		else if(s.length() == 1) {
 			char c = s.charAt(0);
 			if(c >= '0' && c <= '9') {
-				this.lvl = Integer.parseInt(""+c);
+				Ex2.scenario = Integer.parseInt(""+c);
 				return true;
 			}	
 			else {
-				ErrorFrame ero = new ErrorFrame("You give a wrong level!");
+//				ErrorFrame ero = new ErrorFrame("You give a wrong level!");
 				return false;
 			}	
 		}
@@ -238,11 +241,11 @@ public class guiFrame extends JFrame implements ActionListener{
 			char c0 = s.charAt(0);
 			char c1 = s.charAt(1);		
 			if((c0=='1' && c1>='0' && c1<= '9')||((c0== '2' && c1>='0' && c1<= '3' ))) {
-				this.lvl = Integer.parseInt(s.substring(0,2));
+				Ex2.scenario = Integer.parseInt(s.substring(0,2));
 				return true;
 			}	
 			else {
-				ErrorFrame ero = new ErrorFrame("You give a wrong level!");
+//				ErrorFrame ero = new ErrorFrame("You give a wrong level!");
 				return false;
 			}
 		}
@@ -257,14 +260,14 @@ public class guiFrame extends JFrame implements ActionListener{
 	private boolean idCheck() {
 		String s = this.ID.getText();
 		if(s.length()!=9) {
-			ErrorFrame ero = new ErrorFrame("You give a wrong id!");
+//			ErrorFrame ero = new ErrorFrame("You give a wrong id!");
 			return false;
 		}
 		else {
 			for(int i=0;i<9;i++) {
 				char c = s.charAt(i);
 				if(c < '0' || c > '9') {
-					ErrorFrame ero = new ErrorFrame("You give a wrong id!");
+//					ErrorFrame ero = new ErrorFrame("You give a wrong id!");
 					return false;
 				}		
 			}
@@ -277,7 +280,7 @@ public class guiFrame extends JFrame implements ActionListener{
 	 */
 	private void logIn() {
 		if(this.score.equals("null")) {
-			ErrorFrame ero = new ErrorFrame("The game is not over!");
+//			ErrorFrame ero = new ErrorFrame("The game is not over!");
 		}
 		else {
 			this.game.login(this.idLong);
@@ -292,7 +295,7 @@ public class guiFrame extends JFrame implements ActionListener{
 	 */
 	private void save() {
 		if(this.score.equals("null")) {
-			ErrorFrame ero = new ErrorFrame("The game is not over!");
+//			ErrorFrame ero = new ErrorFrame("The game is not over!");
 		}
 		else {
 			try {
@@ -312,11 +315,6 @@ public class guiFrame extends JFrame implements ActionListener{
 	 * @param s - a string represent the score after the game finish
 	 */
 	public void addScore(String s) {this.score=s;}
-
-	/**
-	 * @return The level was chosen.
-	 */
-	public int getlvl(){return this.lvl;}
 
 	/**
 	 * Updates ID from the main frame
