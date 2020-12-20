@@ -1,5 +1,6 @@
 package api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -123,11 +124,30 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 	@Override
 	public boolean save(String file) {
 		try {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sn = new StringBuilder();
+			StringBuilder se = new StringBuilder();
 			PrintWriter pw=new PrintWriter(new File(file));
-			Gson gson=new GsonBuilder().setPrettyPrinting().create();
-			sb.append(gson.toJson(this.myGraph));
-			pw.write(sb.toString());
+			for(node_data node : myGraph.getV()) {
+				sn.append(node.getKey());
+				sn.append(",");
+				sn.append(node.getLocation().x());
+				sn.append(",");
+				sn.append(node.getLocation().y());
+				sn.append(",");
+				sn.append(node.getLocation().z());
+				sn.append("-");
+				for(edge_data edge : myGraph.getE(node.getKey())) {
+					se.append(edge.getSrc());
+					se.append(",");
+					se.append(edge.getDest());
+					se.append(",");
+					se.append(edge.getWeight());
+					se.append("-");
+				}
+			}
+			sn.append("\n");
+			sn.append(se);
+			pw.write(sn.toString());
 			pw.close();
 			return true;
 		}
@@ -137,37 +157,45 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		}
 	}
 
+
 	@Override
 	public boolean load(String file) {
-		//DWGraph_DS a = new DWGraph_DS();
-//		try 
-//		{
-//			GsonBuilder builder = new GsonBuilder();
-//			builder.registerTypeAdapter(DWGraph_DS.class, new GraphJsonDeserializer());
-//			Gson gson = builder.create();			
-//			//continue as usual.. 
-//
-//			FileReader reader = new FileReader(file);
-//			DWGraph_DS a = gson.fromJson(reader, DWGraph_DS.class);	
-//			System.out.println(a);
-//			return true;
-//		} 
-//		catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
-		try {
-			FileReader read = new FileReader(file);	
-			Gson gson=new Gson();
-			DWGraph_DS a=gson.fromJson(read, DWGraph_DS.class);
-			this.myGraph = a;
+		try 
+		{
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line;
+			directed_weighted_graph grp = new DWGraph_DS();;
+			if((line = br.readLine()) != null){
+				String [] str = line.split("-");
+				for(int i = 0 ; i < str.length ; i++) {
+					String [] str1 = str[i].split(",");
+					int key = Integer.parseInt(str1[0]);
+					double x = Double.parseDouble(str1[1]);
+					double y = Double.parseDouble(str1[2]); 
+					double z = Double.parseDouble(str1[3]);
+					geo_location local = new GeoLocation(x,y,z);
+					node_data node = new Nodes(key,local);
+					grp.addNode(node);
+				}
+			}				
+			if((line = br.readLine()) != null) {
+				String [] str = line.split("-");
+				for(int i = 0 ; i < str.length ; i++) {
+					String [] str1 = str[i].split(",");
+					int src = Integer.parseInt(str1[0]);
+					int dest = Integer.parseInt(str1[1]);
+					double w = Double.parseDouble(str1[2]);
+					grp.connect(src, dest, w);
+				}
+			}
+			br.close();
+			init(grp);
 			return true;
-		}
-		catch(FileNotFoundException e){
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-
 	}
 
 	/**
@@ -239,6 +267,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		}
 		return false;
 	}
-	
-	
+
+
 }
