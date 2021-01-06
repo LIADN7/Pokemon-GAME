@@ -7,6 +7,7 @@ import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import api.*;
 
 class DWGraph_AlgoTest {
@@ -146,26 +147,31 @@ class DWGraph_AlgoTest {
 //		algo.load("read.txt");
 //		System.out.println("test 8 is completed - good job!");
 //	}
+	
 	/**
 	 * algo.connected_components()
 	 */
 	@Test
 	void test6() {
-		directed_weighted_graph grp = create_graph(9);
+
 		DWGraph_Algo algo = new DWGraph_Algo();
-		algo.init(grp);
-		grp.connect(1, 2, 1);
-		grp.connect(2, 3, 1);
-		grp.connect(3, 4, 1);
-		grp.connect(5, 4, 1);
-		grp.connect(4, 5, 1);
-		grp.connect(2, 1, 1);
-		grp.connect(3, 2, 1);
-		
-		for(node_data n : algo.connected_component(1)) {
-			if(n.getKey() != 2 && n.getKey() != 3)
-				fail("not good");
+		DWGraph_DS g = new DWGraph_DS();
+		for(int i=0;i<9;i++) {
+			Nodes temp = new Nodes() ;
+			g.addNode(temp);
+
 		}
+		for(int i=0;i<9;i++)
+			for(int j=0;j<3;j++)
+				g.connect(1000051+i,1000051+i+j,1);
+		
+		for(int i=0;i<7;i++)
+			for(int j=1;j<3;j++) {
+				g.connect(1000051+i+j,1000051+i,1);
+				
+			}
+					
+		algo.init(g);
 		
 			
 		
@@ -173,13 +179,44 @@ class DWGraph_AlgoTest {
 		
 	}
 	
-	public directed_weighted_graph create_graph(int size) {
-		directed_weighted_graph grp = new DWGraph_DS();
-		for(int i = 0 ; i < size ; i++) {
-			node_data n = new Nodes();
-			grp.addNode(n);
+	/**
+	 * Builds a graph with a million vertices
+	 *  and shows what the construction time is.
+	 */
+	@Test
+	void GraphMillion() {
+		long start = new Date().getTime();
+		DWGraph_DS g = new DWGraph_DS();
+		for(int i=0;i<10000;i++) {
+			Nodes temp = new Nodes() ;
+			g.addNode(temp);	
 		}
-		return grp;
+		for(int i=0;i<10000;i++)
+			for(int j=0;j<3;j++)
+				g.connect(i,i+j,1);
+		long end = new Date().getTime();
+		System.out.println("Graph construction 10,000 nodes run time: "+((double)(end-start)/1000)+" secends");
+		
+		for(int i=10000;i<100000;i++) {
+			Nodes temp = new Nodes() ;
+			g.addNode(temp);			
+		}
+		for(int i=10000;i<100000;i++)
+			for(int j=0;j<3;j++)
+				g.connect(i,i+j,1);
+		end = new Date().getTime();
+		System.out.println("Graph construction 100,000 nodes run time: "+((double)(end-start)/1000)+" secends");
+
+		for(int i=100000;i<1000000;i++) {
+			Nodes temp = new Nodes() ;
+			g.addNode(temp);			
+		}
+		for(int i=100000;i<1000000;i++)
+			for(int j=0;j<3;j++)
+				g.connect(i,i+j,1);
+		end = new Date().getTime();
+		System.out.println("Graph construction 1,000,000 nodes run time: "+((double)(end-start)/1000)+" secends");
+		
 	}
 
 }
