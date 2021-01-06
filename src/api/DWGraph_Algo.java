@@ -118,6 +118,31 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		return list;
 	}
 
+	public List<node_data> connected_component(int id){
+		List<node_data> list = new LinkedList<node_data>();
+		if(this.myGraph.getNode(id) != null) {
+			
+			for(node_data n : this.myGraph.getV()) {
+				if(scc(id,n.getKey())) {
+					list.add(n);
+				}
+			}
+		}
+		return list;	
+	}
+	
+	public List<List<node_data>> connected_components(){
+		List<List<node_data>> list = new LinkedList<List<node_data>>();
+		if(myGraph.nodeSize() <= 1)
+			return null;
+		
+		for(node_data n : myGraph.getV()) {
+			List<node_data> l = connected_component(n.getKey());
+			list.add(l);
+		}
+		return list;	
+	}
+	
 	@Override
 	public boolean save(String file) {
 		try {
@@ -153,7 +178,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 			return false;
 		}
 	}
-
 
 	@Override
 	public boolean load(String file) {
@@ -194,7 +218,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 			return false;
 		}
 	}
-
+	
 	/**
 	 * get two keys - one for the start node and the other for the node need to 
 	 * find the path to it
@@ -264,6 +288,36 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 		}
 		return false;
 	}
-
-
+	
+	private boolean scc(int i, int j) {
+        if (i == j)
+            return false;
+        if(!bfs1(i, j))
+            return false;
+        if (!bfs1(j, i))
+            return false;
+        return true;
+	}
+	
+    private boolean bfs1(int src,int dest) {
+    	HashMap<Integer,Integer> map = new HashMap<Integer,Integer>();
+		LinkedList<Integer> q = new LinkedList<Integer>();
+		map.put(src, src);
+		q.add(src);
+		while(!q.isEmpty()) {
+			int poll = q.poll();
+			for(edge_data edge : myGraph.getE(poll)) {
+				int temp = edge.getDest();
+				if(temp == dest) {
+					return true;
+				}
+				else if(!map.containsKey(temp)) {
+					
+					q.add(temp);
+					map.put(temp, temp);
+				}
+			}
+		}
+		return false;
+    }
 }

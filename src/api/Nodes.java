@@ -102,4 +102,8 @@ public class Nodes implements node_data {
 	public void setTag(int t) {
 		this.tag = t;
 	}
+	
+	public String toString() {
+		return "key = " + this.key;
+	}
 }

@@ -146,5 +146,40 @@ class DWGraph_AlgoTest {
 //		algo.load("read.txt");
 //		System.out.println("test 8 is completed - good job!");
 //	}
+	/**
+	 * algo.connected_components()
+	 */
+	@Test
+	void test6() {
+		directed_weighted_graph grp = create_graph(9);
+		DWGraph_Algo algo = new DWGraph_Algo();
+		algo.init(grp);
+		grp.connect(1, 2, 1);
+		grp.connect(2, 3, 1);
+		grp.connect(3, 4, 1);
+		grp.connect(5, 4, 1);
+		grp.connect(4, 5, 1);
+		grp.connect(2, 1, 1);
+		grp.connect(3, 2, 1);
+		
+		for(node_data n : algo.connected_component(1)) {
+			if(n.getKey() != 2 && n.getKey() != 3)
+				fail("not good");
+		}
+		
+			
+		
+		System.out.println("test 6 is completed - good job!");
+		
+	}
+	
+	public directed_weighted_graph create_graph(int size) {
+		directed_weighted_graph grp = new DWGraph_DS();
+		for(int i = 0 ; i < size ; i++) {
+			node_data n = new Nodes();
+			grp.addNode(n);
+		}
+		return grp;
+	}
 
 }
