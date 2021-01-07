@@ -101,6 +101,8 @@ class DWGraph_AlgoTest {
 		dw.connect(g.getKey(), h.getKey(), 1);
 		
 		algo.init(dw);
+		double tr = algo.shortestPathDist(h.getKey(), a.getKey());
+		assertEquals(-1, tr);
 		double num = algo.shortestPathDist(a.getKey(), h.getKey());
 		assertEquals(7, num);
 		//need to be (22) -->> 25 -->> 26 -->> 28 -->> 29
@@ -114,7 +116,6 @@ class DWGraph_AlgoTest {
 		System.out.println("test 4 is completed - good job!");
 	}
 	
-    
 	/**
 	 * boolean save(String file)
 	 */
@@ -137,6 +138,7 @@ class DWGraph_AlgoTest {
 		algo.save("test5.txt");
 		System.out.println("test 5 is completed - good job!");
 	}
+	
 
 //	/**
 //	 * boolean load(String file)
@@ -153,7 +155,6 @@ class DWGraph_AlgoTest {
 	 */
 	@Test
 	void test6() {
-
 		DWGraph_Algo algo = new DWGraph_Algo();
 		DWGraph_DS g = new DWGraph_DS();
 		for(int i=0;i<9;i++) {
@@ -169,12 +170,10 @@ class DWGraph_AlgoTest {
 			for(int j=1;j<3;j++) {
 				g.connect(1000051+i+j,1000051+i,1);
 				
-			}
-					
+			}	
+		
+		
 		algo.init(g);
-		
-			
-		
 		System.out.println("test 6 is completed - good job!");
 		
 	}

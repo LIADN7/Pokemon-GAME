@@ -32,6 +32,19 @@ public class Nodes implements node_data {
 	}	
 	
 	/**
+	 * constructor 2 - get only value for the key
+	 */
+	public Nodes(int id) {
+		if(id > defaulttkey)
+			defaulttkey = id + 1;
+		this.key = id;
+		this.info = null;
+		this.tag = 0;
+		this.NW = 0;
+		this.local = new GeoLocation();
+	}
+	
+	/**
 	 * copy constructor
 	 * @param node - type node_data
 	 */
