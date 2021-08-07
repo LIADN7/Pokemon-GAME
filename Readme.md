@@ -4,10 +4,6 @@ Pokemon game
 ![](https://github.com/LIADN7/Pokemon-GAME/blob/master/img/icon.png)
 
 
-api - done - Point. GeoLocation. Edges. Connection Nodes. DWGraph_DS. DWGraph_Algo.
-
-gameClient - done - 
-			 need - Ex2. myGame. guiPanel. guiFrame.
 
 the class Point presents a point
 the point has :
